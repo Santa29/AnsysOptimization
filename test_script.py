@@ -11,7 +11,7 @@ How start_calculation actually works:
 """
 
 from random import randint
-import my_orm
+import shell
 
 def logging(message):
     """This function create the new records in logging file"""

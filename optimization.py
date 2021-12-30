@@ -4,7 +4,7 @@ from math import pow
 import numpy as np
 
 from test_script import logging
-import my_orm
+import shell
 
 def random_generator(min_value = -89, max_value = 90):
     """
