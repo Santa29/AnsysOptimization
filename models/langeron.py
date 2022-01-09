@@ -15,14 +15,15 @@ Model for all DB:
 12) antiflatter_x : real
 13) antiflatter_y : real
 14) antiflatter_diam : real
-15) antiflatter_lenght : real
-15) wall_lenght : real
+15) antiflatter_length : real
+15) wall_length : real
 16) wall_angle : real
 """
 
 from sqlalchemy import Column, String
 
-from shell import ShellModel
+from models.shell import ShellModel
+
 
 class LangeronModel(ShellModel):
     """Default model of wing with longerone"""
@@ -30,5 +31,5 @@ class LangeronModel(ShellModel):
 
     langeron_angles = Column('langeron_angles', String)
     langeron_wall_angles = Column('langeron_wall_angles', String)
-    wall_lenght = Column('wall_lenght', String)
+    wall_length = Column('wall_length', String)
     wall_angle = Column('wall_angle', String)

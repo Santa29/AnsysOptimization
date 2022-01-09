@@ -15,14 +15,16 @@ Model for all DB:
 12) antiflatter_x : real
 13) antiflatter_y : real
 14) antiflatter_diam : real
-15) antiflatter_lenght : real
-15) wall_lenght : real
+15) antiflatter_length : real
+15) wall_length : real
 16) wall_angle : real
+17) creation_time: datetime
 """
 
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, DateTime
 
-from datebase import Base
+from models.datebase import Base
+
 
 class ShellModel(Base):
     """Default model of wing without longerone"""
@@ -41,27 +43,29 @@ class ShellModel(Base):
     antiflatter_x = Column('antiflatter_x', Integer)
     antiflatter_y = Column('antiflatter_y', Integer)
     antiflatter_diam = Column('antiflatter_diam', Float)
-    antiflatter_lenght = Column('antiflatter_lenght', Float)
+    antiflatter_length = Column('antiflatter_length', Float)
+    creation_time = Column('creation_time', DateTime)
 
-    def __init__(self, series: str, shell_angles: list, antiflatter_x: int, antiflatter_y: int, antiflatter_diam: float, antiflatter_lenght: float):
+    def __init__(self, series: str, shell_angles: list, antiflatter_x: int, antiflatter_y: int, antiflatter_diam: float,
+                 antiflatter_length: float):
         self.series = series
         self.shell_angles = self.encode_angles_from_list(shell_angles)
         self.model_name = self.name_autoincrement(series, shell_angles)
         self.antiflatter_x = antiflatter_x
         self.antiflatter_y = antiflatter_y
         self.antiflatter_diam = antiflatter_diam
-        self.antiflatter_lenght = antiflatter_lenght
+        self.antiflatter_length = antiflatter_length
 
     def __repr__(self):
         info: str = f'Оболочка [Серия - {self.series} Имя - {self.model_name}]'
         return info
-    
+
     @staticmethod
     def name_autoincrement(series, shell_angles):
         angles_string = ''
         for el in shell_angles:
             angles_string = angles_string + ', ' + el
-        name = 'Series.' + series + 'Angles:' + angles_string
+        name = 'Series.' + series + ' Angles:' + angles_string
         return name
 
     @staticmethod

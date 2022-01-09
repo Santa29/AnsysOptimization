@@ -11,7 +11,7 @@ How start_calculation actually works:
 """
 
 from random import randint
-import shell
+
 
 def logging(message):
     """This function create the new records in logging file"""
@@ -53,14 +53,18 @@ def update_project():
         setup3 = system4.GetContainer(ComponentName="Setup")
         solution2 = system4.GetContainer(ComponentName="Solution")
         results3 = system4.GetContainer(ComponentName="Results")
-        Parameters.SetRetainedDesignPointDataInvalid(InvalidContainers=[engineeringData1, geometry1, model1, results1, setup1, mesh1, setup2, solution1, results2, model2, setup3, solution2, results3])
+        Parameters.SetRetainedDesignPointDataInvalid(
+            InvalidContainers=[engineeringData1, geometry1, model1, results1, setup1, mesh1, setup2, solution1,
+                               results2, model2, setup3, solution2, results3])
         setupComponent1 = system1.GetComponent(Name="Setup")
         modelComponent1 = system4.GetComponent(Name="Model")
         setupComponent2 = system4.GetComponent(Name="Setup")
         solutionComponent1 = system4.GetComponent(Name="Solution")
         resultsComponent1 = system4.GetComponent(Name="Results")
         resultsComponent2 = system2.GetComponent(Name="Results")
-        MarkComponentsOutOfDateForDps(Components=[setupComponent1, modelComponent1, setupComponent2, solutionComponent1, resultsComponent1, resultsComponent2])
+        MarkComponentsOutOfDateForDps(
+            Components=[setupComponent1, modelComponent1, setupComponent2, solutionComponent1, resultsComponent1,
+                        resultsComponent2])
         Parameters.SetPartiallyRetainedDataInvalid(Containers=[setup1, model2, setup3, solution2, results3, results1])
         Update()
     except:
@@ -79,9 +83,9 @@ def update_acp_post():
         logging('Error when trying get the values from ACP')
     else:
         logging('Get the values from ACP success')
-    
 
-def put_values_into_alhoritm():
+
+def put_values_into_algorithm():
     """This function put the new values to the optimization alhoritm"""
     f = open(r'C:\Users\1\Desktop\Work\Lopast_helicopter_13_10\Scripts\angles.txt', 'w')
     for i in range(randint(5, 20)):
