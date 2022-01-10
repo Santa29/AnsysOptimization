@@ -1,3 +1,4 @@
+# TODO write the database connection
 f = open(r'C:\Users\1\Desktop\Work\Lopast_helicopter_13_10\Scripts\results.txt', 'a')
 db.models['ACP Model'].update(objects=[db.models['ACP Model'].solutions['Solution 1']])
 model = db.models['ACP Model']

@@ -11,11 +11,17 @@ How start_calculation actually works:
 """
 
 from random import randint
+import pathlib
+
+dir_path = pathlib.Path.cwd()
+log_path = pathlib.Path(dir_path, 'scripts', 'log.txt')
+acp_pre_path = pathlib.Path(dir_path, 'scripts', 'acp_pre.py')
+acp_post_path = pathlib.Path(dir_path, 'scripts', 'acp_post.py')
 
 
 def logging(message):
     """This function create the new records in logging file"""
-    f = open(r'C:\Users\1\Desktop\Work\Lopast_helicopter_13_10\Scripts\log.txt', 'a')
+    f = open(log_path, 'a')
     f.write(message + '\n')
     f.close()
 
@@ -25,7 +31,7 @@ def update_acp_pre():
     try:
         system1 = GetSystem(Name="ACP-Pre")
         setup1 = system1.GetContainer(ComponentName="Setup")
-        setup1.RunScript(ScriptPath=r"C:\Users\1\Desktop\Work\Lopast_helicopter_13_10\Scripts\acp_pre.py")
+        setup1.RunScript(ScriptPath=acp_pre_path)
     except:
         logging('Update ACP failed')
     else:
@@ -78,7 +84,7 @@ def update_acp_post():
     try:
         system1 = GetSystem(Name="ACP-Post")
         setup1 = system1.GetContainer(ComponentName="Results")
-        setup1.RunScript(ScriptPath=r"C:\Users\1\Desktop\Work\Lopast_helicopter_13_10\Scripts\acp_post.py")
+        setup1.RunScript(ScriptPath=acp_post_path)
     except:
         logging('Error when trying get the values from ACP')
     else:
