@@ -20,7 +20,7 @@ Model for all DB:
 16) wall_angle : real
 """
 
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Integer
 
 from models.shell import ShellModel
 
@@ -33,3 +33,4 @@ class LangeronModel(ShellModel):
     langeron_wall_angles = Column('langeron_wall_angles', String)
     wall_length = Column('wall_length', String)
     wall_angle = Column('wall_angle', String)
+    polymer_volume_coordinate = Column('polymer_volume_coordinate', Integer)
