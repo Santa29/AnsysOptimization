@@ -12,10 +12,9 @@ Model for all DB:
 9) value_spectrum_tang : json (text)
 10) value_spectrum_attack : json (text)
 11) value_spectrum_roll : json (text)
-12) antiflatter_x : real
-13) antiflatter_y : real
-14) antiflatter_diam : real
-15) antiflatter_length : real
+12) antiflatter_value : integer
+13) antiflatter_diam : real
+14) antiflatter_length : real
 15) wall_length : real
 16) wall_angle : real
 17) creation_time: datetime
@@ -40,8 +39,7 @@ class ShellModel(Base):
     value_spectrum_tang = Column('value_spectrum_tang', Float)
     value_spectrum_attack = Column('value_spectrum_attack', Float)
     value_spectrum_roll = Column('value_spectrum_roll', Float)
-    antiflatter_x = Column('antiflatter_x', Integer)
-    antiflatter_y = Column('antiflatter_y', Integer)
+    antiflatter_value = Column('antiflatter_value', Integer)
     antiflatter_diam = Column('antiflatter_diam', Float)
     antiflatter_length = Column('antiflatter_length', Float)
     creation_time = Column('creation_time', DateTime)
