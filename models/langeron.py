@@ -20,17 +20,70 @@ Model for all DB:
 16) wall_angle : real
 """
 
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, Integer, String, Float, DateTime
 
-from models.shell import ShellModel
+from models.database import Base
+
+import datetime
 
 
-class LangeronModel(ShellModel):
+class LangeronModel(Base):
     """Default model of wing with longerone"""
     __tablename__ = 'Langeron'
 
+    id = Column(Integer, primary_key=True, autoincrement=True)
     langeron_angles = Column('langeron_angles', String)
     langeron_wall_angles = Column('langeron_wall_angles', String)
     wall_length = Column('wall_length', String)
     wall_angle = Column('wall_angle', String)
     polymer_volume_coordinate = Column('polymer_volume_coordinate', Integer)
+    series = Column('series', String)
+    model_name = Column('model_name', String)
+    shell_angles = Column('shell_angles', String)
+    value_vertical = Column('value_vertical', Float)
+    value_horizontal = Column('value_horizontal', Float)
+    value_neutral = Column('value_neutral', Float)
+    value_spectrum_tang = Column('value_spectrum_tang', Float)
+    value_spectrum_attack = Column('value_spectrum_attack', Float)
+    value_spectrum_roll = Column('value_spectrum_roll', Float)
+    antiflatter_value = Column('antiflatter_value', Integer)
+    antiflatter_diam = Column('antiflatter_diam', Float)
+    antiflatter_length = Column('antiflatter_length', Float)
+    creation_time = Column('creation_time', DateTime)
+
+    def __init__(self, series: str, shell_angles: list, antiflatter_value: int, antiflatter_diam: float,
+                 antiflatter_length: float):
+        self.series = series
+        self.shell_angles = self.encode_angles_from_list(shell_angles)
+        self.model_name = self.name_autoincrement(series, shell_angles)
+        self.antiflatter_value = antiflatter_value
+        self.antiflatter_diam = antiflatter_diam
+        self.antiflatter_length = antiflatter_length
+        self.creation_time = datetime.datetime.now()
+
+    def __repr__(self):
+        info: str = f'Оболочка [Серия - {self.series} Имя - {self.model_name}]'
+        return info
+
+    @staticmethod
+    def name_autoincrement(series, shell_angles):
+        angles_string = ''
+        for el in shell_angles:
+            angles_string = angles_string + ', ' + el
+        name = 'Series.' + series + ' Angles:' + angles_string
+        return name
+
+    @staticmethod
+    def decode_angles_to_list(value):
+        list_of_angles = []
+        for el in value.split('\n'):
+            if el != '':
+                list_of_angles.append(el)
+        return list_of_angles
+
+    @staticmethod
+    def encode_angles_from_list(angles_list):
+        value = ''
+        for el in angles_list:
+            value = value + el + '\n'
+        return value

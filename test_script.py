@@ -12,11 +12,16 @@ How start_calculation actually works:
 
 from random import randint
 import pathlib
+import os
+
+from models.database import DATABASE_NAME
+import create_database as db_creator
 
 dir_path = pathlib.Path.cwd()
 log_path = pathlib.Path(dir_path, 'scripts', 'log.txt')
 acp_pre_path = pathlib.Path(dir_path, 'scripts', 'acp_pre.py')
 acp_post_path = pathlib.Path(dir_path, 'scripts', 'acp_post.py')
+geometry_script_path = pathlib.Path(dir_path, 'scripts', 'geometry_creation.scscript')
 
 
 def logging(message):
@@ -38,15 +43,30 @@ def update_acp_pre():
         logging('Update ACP success')
 
 
+def recreate_geometry():
+    try:
+        system = GetSystem(Name='Geom-1')
+        setup = system.GetContainer(ComponentName='Geometry')
+        setup.RunScript(ScriptPath=geometry_script_path)
+    except:
+        logging('Update geometry failing')
+    else:
+        logging('Update geometry success')
+
+
+def update_component(name, container_list):
+    system = GetSystem(Name=name)
+    invalid_containers = []
+    for container in container_list:
+        invalid_containers.append(system.GetContainer(ComponentName=container))
+    Parameters.SetRetainedDesignPointDataInvalid(InvalaidContainers=invalid_containers)
+
+
 def update_project():
     """This function update the project in Workbench window"""
     try:
-        system1 = GetSystem(Name="ACP-Pre")
-        setup1 = system1.GetContainer(ComponentName="Setup")
+        update_component('ACP-Pre', ('Setup', 'Geometry', 'Model', 'Results', 'Engineering Data'))
         Parameters.SetDesignPointsOutOfDate()
-        engineeringData1 = system1.GetContainer(ComponentName="Engineering Data")
-        geometry1 = system1.GetContainer(ComponentName="Geometry")
-        model1 = system1.GetContainer(ComponentName="Model")
         system2 = GetSystem(Name="ACP-Post")
         results1 = system2.GetContainer(ComponentName="Results")
         system3 = GetSystem(Name="CFX")
@@ -100,6 +120,6 @@ def put_values_into_algorithm():
     f.close()
 
 
-update_acp_pre()
-update_project()
-update_acp_post()
+db_is_created = os.path.exists(DATABASE_NAME)
+if not db_is_created:
+    db_creator.create_db()

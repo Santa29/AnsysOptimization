@@ -22,7 +22,9 @@ Model for all DB:
 
 from sqlalchemy import Column, Integer, String, Float, DateTime
 
-from models.datebase import Base
+from models.database import Base
+
+import datetime
 
 
 class ShellModel(Base):
@@ -44,15 +46,15 @@ class ShellModel(Base):
     antiflatter_length = Column('antiflatter_length', Float)
     creation_time = Column('creation_time', DateTime)
 
-    def __init__(self, series: str, shell_angles: list, antiflatter_x: int, antiflatter_y: int, antiflatter_diam: float,
+    def __init__(self, series: str, shell_angles: list, antiflatter_value: int, antiflatter_diam: float,
                  antiflatter_length: float):
         self.series = series
         self.shell_angles = self.encode_angles_from_list(shell_angles)
         self.model_name = self.name_autoincrement(series, shell_angles)
-        self.antiflatter_x = antiflatter_x
-        self.antiflatter_y = antiflatter_y
+        self.antiflatter_value = antiflatter_value
         self.antiflatter_diam = antiflatter_diam
         self.antiflatter_length = antiflatter_length
+        self.creation_time = datetime.datetime.now()
 
     def __repr__(self):
         info: str = f'Оболочка [Серия - {self.series} Имя - {self.model_name}]'
