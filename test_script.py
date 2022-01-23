@@ -11,17 +11,17 @@ How start_calculation actually works:
 """
 
 from random import randint
-import pathlib
 import os
+import sys
 
-from models.database import DATABASE_NAME
-import create_database as db_creator
 
-dir_path = pathlib.Path.cwd()
-log_path = pathlib.Path(dir_path, 'scripts', 'log.txt')
-acp_pre_path = pathlib.Path(dir_path, 'scripts', 'acp_pre.py')
-acp_post_path = pathlib.Path(dir_path, 'scripts', 'acp_post.py')
-geometry_script_path = pathlib.Path(dir_path, 'scripts', 'geometry_creation.scscript')
+dir_path = os.path.dirname(os.path.abspath(__file__))
+log_path = os.path.join(dir_path, 'scripts', 'log.txt')
+acp_pre_path = os.path.join(dir_path, 'scripts', 'acp_pre.py')
+acp_post_path = os.path.join(dir_path, 'scripts', 'acp_post.py')
+geometry_script_path_vertical = os.path.join(dir_path, 'scripts', 'geometry_creation.scscript')
+geometry_script_path_horizontal = os.path.join(dir_path, 'scripts', 'geometry_creation_rotate_bodies.scscript')
+db_path = os.path.join(dir_path, 'experiment.db')
 
 
 def logging(message):
@@ -55,11 +55,25 @@ def recreate_geometry():
 
 
 def update_component(name, container_list):
+    """This function update current component"""
     system = GetSystem(Name=name)
     invalid_containers = []
     for container in container_list:
         invalid_containers.append(system.GetContainer(ComponentName=container))
     Parameters.SetRetainedDesignPointDataInvalid(InvalaidContainers=invalid_containers)
+    Update()
+
+
+def run_script(name, component, script_path, message_success, message_fail):
+    """This function run script in the current module with the current name"""
+    try:
+        system1 = GetSystem(Name=name)
+        setup1 = system1.GetContainer(ComponentName=component)
+        setup1.RunScript(ScriptPath=script_path)
+    except:
+        logging(message_fail)
+    else:
+        logging(message_success)
 
 
 def update_project():
@@ -119,7 +133,5 @@ def put_values_into_algorithm():
         f.write(str(value) + '\n')
     f.close()
 
-
-db_is_created = os.path.exists(DATABASE_NAME)
-if not db_is_created:
-    db_creator.create_db()
+#update_component('ACP-Pre', ('Setup', 'Geometry', 'Model', 'Results', 'Engineering Data'))
+run_script('Geom-3', 'Geometry', geometry_script_path_vertical, 'Geometry update success', 'Geometry failed')
