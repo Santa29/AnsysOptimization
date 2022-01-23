@@ -42,15 +42,20 @@ def update_acp_pre():
         logging('Update ACP success')
 
 
-def recreate_geometry():
+def recreate_geometry(name, component, script_path, message_success, message_fail):
     try:
-        system = GetSystem(Name='Geom-1')
-        setup = system.GetContainer(ComponentName='Geometry')
-        setup.RunScript(ScriptPath=geometry_script_path)
+        system1 = GetSystem(Name=name)
+        geometry1 = system1.GetContainer(ComponentName=component)
+        geometry1.Edit(IsSpaceClaimGeometry=True)
+        DSscript = open(script_path, "r")
+        DSscriptcommand = DSscript.read()
+        DSscript.close()
+        geometry1.SendCommand(Command=DSscriptcommand, Language="Python")
+        geometry1.Exit()
     except:
-        logging('Update geometry failing')
+        logging(message_fail)
     else:
-        logging('Update geometry success')
+        logging(message_success)
 
 
 def update_component(name, container_list):
@@ -134,4 +139,4 @@ def put_values_into_algorithm():
 
 
 # update_component('ACP-Pre', ('Setup', 'Geometry', 'Model', 'Results', 'Engineering Data'))
-run_script('Geom-3', 'Geometry-5', geometry_script_path_vertical, 'Geometry update success', 'Geometry failed')
+recreate_geometry('Geom-3', 'Geometry-5', geometry_script_path_vertical, 'Geometry update success', 'Geometry failed')
