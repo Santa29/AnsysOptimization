@@ -14,13 +14,12 @@ from random import randint
 import os
 import sys
 
-
 dir_path = os.path.dirname(os.path.abspath(__file__))
 log_path = os.path.join(dir_path, 'scripts', 'log.txt')
 acp_pre_path = os.path.join(dir_path, 'scripts', 'acp_pre.py')
 acp_post_path = os.path.join(dir_path, 'scripts', 'acp_post.py')
-geometry_script_path_vertical = os.path.join(dir_path, 'scripts', 'geometry_creation.scscript')
-geometry_script_path_horizontal = os.path.join(dir_path, 'scripts', 'geometry_creation_rotate_bodies.scscript')
+geometry_script_path_vertical = os.path.join(dir_path, 'scripts', 'geometry_creation.py')
+geometry_script_path_horizontal = os.path.join(dir_path, 'scripts', 'geometry_creation_rotate_bodies.py')
 db_path = os.path.join(dir_path, 'experiment.db')
 
 
@@ -133,5 +132,6 @@ def put_values_into_algorithm():
         f.write(str(value) + '\n')
     f.close()
 
-#update_component('ACP-Pre', ('Setup', 'Geometry', 'Model', 'Results', 'Engineering Data'))
-run_script('Geom-3', 'Geometry', geometry_script_path_vertical, 'Geometry update success', 'Geometry failed')
+
+# update_component('ACP-Pre', ('Setup', 'Geometry', 'Model', 'Results', 'Engineering Data'))
+run_script('Geom-3', 'Geometry-5', geometry_script_path_vertical, 'Geometry update success', 'Geometry failed')
