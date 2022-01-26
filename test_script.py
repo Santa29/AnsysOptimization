@@ -51,7 +51,7 @@ def recreate_geometry(name, component, script_path, message_success, message_fai
         DSscriptcommand = DSscript.read()
         DSscript.close()
         geometry.SendCommand(Command=DSscriptcommand, Language="Python")
-        geometry.Exit()
+        # geometry.Exit()
     except:
         logging(message_fail)
     else:
@@ -139,4 +139,4 @@ def put_values_into_algorithm():
 
 
 # update_component('ACP-Pre', ('Setup', 'Geometry', 'Model', 'Results', 'Engineering Data'))
-recreate_geometry('Geom 3', 'Geometry 5', geometry_script_path_vertical, 'Geometry update success', 'Geometry failed')
+recreate_geometry('Geom', 'Geometry', geometry_script_path_vertical, 'Geometry update success', 'Geometry failed')
