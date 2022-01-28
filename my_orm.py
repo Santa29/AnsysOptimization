@@ -5,10 +5,11 @@ class BaseManager:
     connection = None
 
     @classmethod
-    def set_connection(cls, database_settings):
-        connection = sqlite3.connect(**database_settings)
+    def set_connection(cls, database_name='experiment.sqlite'):
+        connection = sqlite3.connect(database_name)
         connection.autocommit = True
         cls.connection = connection
+        cls.database_name = database_name
 
     @classmethod
     def _get_cursor(cls):
@@ -28,7 +29,7 @@ class BaseManager:
         query = f'SELECT {fields_format} FROM {self.model_class.table_name}'
 
         # Execute our query
-        conn = sqlite3.connect(**self.database_settings)
+        conn = sqlite3.connect('experiment.sqlite')
         cursor = conn.cursor()
         cursor.execute(query)
 
@@ -45,25 +46,41 @@ class BaseManager:
 
         return model_objects
 
-    def bulk_insert(self, rows):
-        field_names = rows[0].keys()
-        assert all(row.keys() == field_names for row in rows[1:])
+    def execute_series(self, series):
+        query = f'SELECT * from {self.model_class.table_name} WHERE series = {series}'
+        # Execute our query
+        conn = sqlite3.connect(self.database_name)
+        cursor = conn.cursor()
+        result = cursor.execute(query)
 
+        return result
+
+    def bulk_insert(self, insert_list):
+        # Execute our query
+        conn = sqlite3.connect('experiment.sqlite')
+        cursor = conn.cursor()
+
+        field_names = insert_list[0].keys()
         fields_format = ", ".join(field_names)
-        values_placeholder_format = ", ".join([f'({", ".join(["%s"] * len(field_names))})'] * len(
-            rows))
+        values_placeholder_format = ''
+        for el in insert_list:
+            tmp = '('
+            for value in el.values():
+                if type(value) != str:
+                    tmp = tmp + str(value) + ", "
+                else:
+                    tmp = tmp + '\'' + value + '\'' + ", "
+            tmp = tmp[:-2]
+            tmp = tmp + ')'
+            values_placeholder_format = values_placeholder_format + tmp + ', '
+        values_placeholder_format = values_placeholder_format[:-2]
 
         query = f"INSERT INTO {self.model_class.table_name} ({fields_format}) " \
-                f"VALUES {values_placeholder_format}"
+                f"VALUES {values_placeholder_format};"
+        cursor.execute(query)
+        conn.commit()
 
-        params = list()
-        for row in rows:
-            row_values = [row[field_name] for field_name in field_names]
-            params += row_values
-
-        self._execute_query(query, params)
-
-    def update(self, new_data: dict):
+    def update(self, new_data):
         field_names = new_data.keys()
         placeholder_format = ', '.join([f'{field_name} = %s' for field_name in field_names])
         query = f"UPDATE {self.model_class.table_name} SET {placeholder_format}"
@@ -95,16 +112,12 @@ class BaseModel(metaclass=MetaModel):
         for field_name, value in row_data.items():
             setattr(self, field_name, value)
 
-    def __repr__(self):
-        attrs_format = ", ".join([f'{field}={value}' for field, value in self.__dict__.items()])
-        return f"<{self.__class__.__name__}: ({attrs_format})>"
 
-
-class Shell(BaseModel):
+class ShellTable(BaseModel):
     manager_class = BaseManager
     table_name = 'shell'
 
 
-class Langeron(BaseModel):
+class LangeronTable(BaseModel):
     manager_class = BaseManager
     table_name = 'langeron'

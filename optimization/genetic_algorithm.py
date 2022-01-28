@@ -10,7 +10,7 @@ class GeneticAlgorithm:
         for wing in list_of_wings:
             self.parents.append(wing)
         self.children = []
-        self.mutation_rate = 1.02
+        self.mutation_rate = 0.02
         self.best_individual = list_of_wings[0]
 
     def selection(self):
@@ -48,11 +48,11 @@ class GeneticAlgorithm:
         return indices_parents
 
     def crossover(self, indices_parents):
-        ch = (self.parents[indices_parents[0]], self.parents[indices_parents[1]])
-        crossover_points = (
+        ch = [self.parents[indices_parents[0]], self.parents[indices_parents[1]]]
+        crossover_points = [
             randint(0, ch[0].get_size_in_bits()),
             randint(0, ch[0].get_size_in_bits())
-        )
+        ]
         if crossover_points[0] > crossover_points[1]:
             crossover_points[0], crossover_points[1] = crossover_points[1], crossover_points[0]
         for i in range(crossover_points[0], crossover_points[1]):
@@ -73,7 +73,7 @@ class GeneticAlgorithm:
     def optimization(self):
         generation_number = 1
         for parent in self.parents:
-            parent.set_cost()
+            parent.calculate_cost()
             if parent.cost < self.best_individual.cost:
                 self.best_individual = parent
         indices_parent = [0, 0]
@@ -84,7 +84,7 @@ class GeneticAlgorithm:
 
             # Estimate children cost
             for child in self.children:
-                child.set_cost()
+                child.calculate_cost()
                 if child.cost < self.best_individual.cost:
                     self.best_individual = child
 
