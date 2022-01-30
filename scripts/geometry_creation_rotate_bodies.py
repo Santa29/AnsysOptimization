@@ -1,3 +1,4 @@
+
 # Python Script, API Version = V19
 # Python Script, API Version = V19
 ClearAll()
@@ -68,9 +69,9 @@ result = SketchHelper.StartConstraintSketching()
 # EndBlock
 
 # Sketch Line
-start = Point2D.Create(MM(Parameters.wall_length + SCALE_FACTOR * math.tan(Parameters.wall_angle)),
+start = Point2D.Create(MM(Parameters.wall_length + SCALE_FACTOR * math.tan(math.degrees(Parameters.wall_angle))),
 MM(SCALE_FACTOR))
-end = Point2D.Create(MM(Parameters.wall_length - SCALE_FACTOR * math.tan(Parameters.wall_angle)),
+end = Point2D.Create(MM(Parameters.wall_length - SCALE_FACTOR * math.tan(math.degrees(Parameters.wall_angle))),
 MM(-SCALE_FACTOR))
 result = SketchLine.Create(start, end)
 # EndBlock
@@ -393,7 +394,7 @@ result = Delete.Execute(selection)
 curvesToOffset = Selection.Create([GetRootPart().DatumPlanes[0].Curves[2],
     GetRootPart().DatumPlanes[0].Curves[1],
     GetRootPart().DatumPlanes[0].Curves[0]])
-offsetDistance = MM(3)
+offsetDistance = MM(Parameters.antiflatter_diam + 0.5)
 result = SketchOffsetCurve.Create(curvesToOffset, offsetDistance)
 # EndBlock
 
@@ -405,9 +406,19 @@ result = Delete.Execute(selection)
 # EndBlock
 
 # Sketch Line
-start = Point2D.Create(MM(9), MM(4.45730746748937))
-end = Point2D.Create(MM(9), MM(-1.52255726825586))
+start = Point2D.Create(MM(20 / math.tan(math.degrees(10)) - 10), MM(20))
+end = Point2D.Create(MM(60 / math.tan(math.degrees(10)) -10), MM(-40))
 result = SketchLine.Create(start, end)
+
+# Trim Sketch Curve
+curveSelPoint = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[3], 0.0273930244126917)
+result = TrimSketchCurve.Execute(curveSelPoint)
+# EndBlock
+
+# Trim Sketch Curve
+curveSelPoint = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[3], 0.0371210617254306)
+result = TrimSketchCurve.Execute(curveSelPoint)
+# EndBlock
 
 baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[3].GetChildren[ICurvePoint]()[0])
 targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[2], 0.00629471188316736)
