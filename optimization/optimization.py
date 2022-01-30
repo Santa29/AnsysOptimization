@@ -15,7 +15,7 @@ def random_generator(min_value=-89, max_value=90):
     return rng.integers(low=min_value, high=max_value)
 
 
-class ArrayAngles():
+class ArrayAngles:
     """Data storage"""
 
     def __init__(self, number_of_layers=2, bytes_per_layer=6, min_angle=-89, max_angle=90):
@@ -37,11 +37,11 @@ class ArrayAngles():
         int:index -> float:x
         """
         try:
-            indexFirstBit = self.bytes_per_layer * (index - 1)
-            positionAngle = 0
-            for i in range(indexFirstBit, indexFirstBit + self.bytes_per_layer):
-                positionAngle += self.data[i] * pow(2, i - indexFirstBit)
-            return self.min_angle + self.step_angles * positionAngle
+            index_first_bit = self.bytes_per_layer * (index - 1)
+            position_angle = 0
+            for i in range(index_first_bit, index_first_bit + self.bytes_per_layer):
+                position_angle += self.data[i] * pow(2, i - index_first_bit)
+            return self.min_angle + self.step_angles * position_angle
         except ValueError:
             logging('Failing to access the layer')
 
@@ -50,12 +50,12 @@ class ArrayAngles():
         This function write to self.data the value of angle which you want to write on it
         int:angle, int:index -> None
         """
-        positionAngle = np.uintc((angle - self.min_angle) / self.step_angles)
-        indexFirstBit = self.bytes_per_layer * (index - 1)
+        position_angle = np.uintc((angle - self.min_angle) / self.step_angles)
+        index_first_bit = self.bytes_per_layer * (index - 1)
         oneBit = np.uintc(1)
-        for i in range(indexFirstBit, indexFirstBit + self.bytes_per_layer):
-            self.data[i] = positionAngle & oneBit
-            positionAngle = positionAngle >> 1
+        for i in range(index_first_bit, index_first_bit + self.bytes_per_layer):
+            self.data[i] = position_angle & oneBit
+            position_angle = position_angle >> 1
 
     def write_angles_to_file(self, path=r'C:\Users\1\Desktop\Work\Lopast_helicopter_13_10\Scripts\angles.txt'):
         """

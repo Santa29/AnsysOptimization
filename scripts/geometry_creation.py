@@ -4,7 +4,7 @@ ClearAll()
 import math
 import os
 
-base_path = r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\scripts'
+base_path = r'C:\Users\1\Desktop\Work\Lopast_helicopter_13_10\AnsysOptimization\scripts'
 path = os.path.join(base_path, 'rc410.dat')
 
 print(path)

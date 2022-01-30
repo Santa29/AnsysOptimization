@@ -12,7 +12,11 @@ How start_calculation actually works:
 
 from random import randint
 import os
-import sys
+
+from models import database_creation
+from my_orm import ShellTable, LangeronTable
+from models import langeron, shell
+from test import test_values_for_orm
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
 log_path = os.path.join(dir_path, 'scripts', 'log.txt')
@@ -51,7 +55,7 @@ def recreate_geometry(name, component, script_path, message_success, message_fai
         DSscriptcommand = DSscript.read()
         DSscript.close()
         geometry.SendCommand(Command=DSscriptcommand, Language="Python")
-        geometry.Exit()
+        # geometry.Exit()
     except:
         logging(message_fail)
     else:
@@ -129,14 +133,12 @@ def update_acp_post():
         logging('Get the values from ACP success')
 
 
-def put_values_into_algorithm():
-    """This function put the new values to the optimization alhoritm"""
-    f = open(r'C:\Users\1\Desktop\Work\Lopast_helicopter_13_10\Scripts\angles.txt', 'w')
-    for i in range(randint(5, 20)):
-        value = randint(0, 900) / 10
-        f.write(str(value) + '\n')
-    f.close()
-
-
 # update_component('ACP-Pre', ('Setup', 'Geometry', 'Model', 'Results', 'Engineering Data'))
-recreate_geometry('Geom 3', 'Geometry 5', geometry_script_path_vertical, 'Geometry update success', 'Geometry failed')
+# recreate_geometry('Geom', 'Geometry', geometry_script_path_vertical, 'Geometry update success', 'Geometry failed')
+test_list = []
+for i in range(20):
+    test_list.append(test_values_for_orm(model_type='Langeron'))
+database_creation.create_table('experiment.sqlite')
+LangeronTable.objects.bulk_insert(test_list)
+a = LangeronTable.objects.select('id')
+print(a)
