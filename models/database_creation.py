@@ -29,7 +29,7 @@ def create_table(db_name):
 
     query = '''
     CREATE TABLE IF NOT EXISTS shell
-        (id SERIAL PRIMARY KEY,
+        (id INTEGER PRIMARY KEY AUTOINCREMENT,
         series TEXT,
         model_name TEXT,
         shell_angles TEXT,

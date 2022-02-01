@@ -46,12 +46,23 @@ class BaseManager:
 
         return model_objects
 
-    def execute_series(self, series):
-        query = f'SELECT * from {self.model_class.table_name} WHERE series = {series}'
+    def execute_series(self, series_param):
+        query = f'SELECT * from {self.model_class.table_name} WHERE series = ?'
+        params = (series_param,)
         # Execute our query
-        conn = sqlite3.connect(self.database_name)
+        conn = sqlite3.connect('experiment.sqlite')
         cursor = conn.cursor()
-        result = cursor.execute(query)
+        result = cursor.execute(query, params)
+
+        return result
+
+    def select_by_id(self, model_id):
+        query = f'SELECT * from {self.model_class.table_name} WHERE id = ?'
+        params = (model_id,)
+        # Execute our query
+        conn = sqlite3.connect('experiment.sqlite')
+        cursor = conn.cursor()
+        result = cursor.execute(query, params)
 
         return result
 
@@ -81,12 +92,21 @@ class BaseManager:
         conn.commit()
 
     def update(self, new_data):
-        field_names = new_data.keys()
-        placeholder_format = ', '.join([f'{field_name} = %s' for field_name in field_names])
-        query = f"UPDATE {self.model_class.table_name} SET {placeholder_format}"
-        params = list(new_data.values())
+        conn = sqlite3.connect('experiment.sqlite')
+        cursor = conn.cursor()
 
-        self._execute_query(query, params)
+        placeholder_format = ''
+        for el in new_data:
+            if type(el) != str:
+                placeholder_format = placeholder_format + f'{el} = {new_data[el]}' + ', '
+            else:
+                placeholder_format = placeholder_format + f'{el} = \'{new_data[el]}\'' + ', '
+        placeholder_format = placeholder_format[:-2]
+        placeholder_format += f' WHERE id = {new_data["id"]}'
+        query = f"UPDATE {self.model_class.table_name} SET {placeholder_format}"
+
+        cursor.execute(query)
+        conn.commit()
 
     def delete(self):
         query = f"DELETE FROM {self.model_class.table_name} "

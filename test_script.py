@@ -10,18 +10,18 @@ How start_calculation actually works:
 5.update_acp_post call acp_post.py
 """
 
-from random import randint
 import os
 
 from models import database_creation
-from my_orm import ShellTable, LangeronTable
-from models import langeron, shell
+from models.my_orm import LangeronTable, ShellTable
+from models import langeron
+from models import shell
 from test import test_values_for_orm
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
 log_path = os.path.join(dir_path, 'scripts', 'log.txt')
-acp_pre_path = os.path.join(dir_path, 'scripts', 'acp_pre.py')
-acp_post_path = os.path.join(dir_path, 'scripts', 'acp_post.py')
+acp_pre_path = os.path.join(dir_path, 'acp_pre.py')
+acp_post_path = os.path.join(dir_path,  'acp_post.py')
 geometry_script_path_vertical = os.path.join(dir_path, 'scripts', 'geometry_creation.py')
 geometry_script_path_horizontal = os.path.join(dir_path, 'scripts', 'geometry_creation_rotate_bodies.py')
 db_path = os.path.join(dir_path, 'experiment.db')
@@ -136,9 +136,22 @@ def update_acp_post():
 # update_component('ACP-Pre', ('Setup', 'Geometry', 'Model', 'Results', 'Engineering Data'))
 # recreate_geometry('Geom', 'Geometry', geometry_script_path_vertical, 'Geometry update success', 'Geometry failed')
 test_list = []
-for i in range(20):
-    test_list.append(test_values_for_orm(model_type='Langeron'))
 database_creation.create_table('experiment.sqlite')
-LangeronTable.objects.bulk_insert(test_list)
-a = LangeronTable.objects.select('id')
-print(a)
+for i in range(20):
+    test_list.append(test_values_for_orm(model_type='Shell'))
+ShellTable.objects.bulk_insert(test_list)
+a = LangeronTable.objects.execute_series('test_langeron')
+b = ShellTable.objects.execute_series('test_shell')
+# Start the db test
+objects_list_1 = []
+objects_list_2 = []
+for el in a.fetchall():
+    objects_list_1.append(langeron.LangeronModel(el))
+for el in b.fetchall():
+    objects_list_2.append(shell.ShellModel(el))
+tmp1 = objects_list_1[0]
+tmp1.shell_angles = '45, 45, 45'
+tmp1.update_values()
+tmp2 = objects_list_2[0]
+tmp2.shell_angles = '30, 30, 30'
+tmp2.update_values()

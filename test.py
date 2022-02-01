@@ -23,10 +23,7 @@ def test_values_for_orm(model_type='Shell'):
             'series': 'test_shell',
             'antiflatter_value': randint(0, 7),
             'antiflatter_diam': randint(1, 5),
-            'antiflatter_length': randint(300, 900) * 100,
-            'wall_length': randint(15, 40),
-            'wall_angle': randint(0, 25),
-            'polymer_volume_coordinate': randint(5, 15),
+            'antiflatter_length': randint(3, 9) * 100,
             'shell_angles': generate_test_angles(3),
         }
         return values
