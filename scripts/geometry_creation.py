@@ -1,10 +1,12 @@
+
+
 # Python Script, API Version = V19
 # Python Script, API Version = V19
 ClearAll()
 import math
 import os
 
-base_path = r'C:\Users\1\Desktop\Work\Lopast_helicopter_13_10\AnsysOptimization\scripts'
+base_path = r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\scripts'
 path = os.path.join(base_path, 'rc410.dat')
 
 print(path)
@@ -511,4 +513,17 @@ result = Combine.RemoveRegions(selection)
 
 # Fix 2 Interferences
 result = FixInterference.FindAndFix()
+# EndBlock
+
+# Delete Selection
+selection = EdgeSelection.Create(GetRootPart().Bodies[0].Edges[8])
+result = Delete.Execute(selection)
+# EndBlock
+
+# Create Named Selection Group
+primarySelection = FaceSelection.Create([GetRootPart().Bodies[0].Faces[2],
+	GetRootPart().Bodies[2].Faces[0],
+	GetRootPart().Bodies[1].Faces[0]])
+secondarySelection = Selection.Empty()
+result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock

@@ -4,7 +4,7 @@ This module provides the interface to easy interaction with DB.
 
 import datetime
 
-from models.my_orm import LangeronTable
+from my_orm import LangeronTable
 
 
 class LangeronModel:

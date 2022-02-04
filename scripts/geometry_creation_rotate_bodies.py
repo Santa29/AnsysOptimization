@@ -1,3 +1,5 @@
+
+
 # Python Script, API Version = V19
 # Python Script, API Version = V19
 ClearAll()
@@ -525,4 +527,17 @@ result = Combine.Intersect(targets, tools, options)
 # Delete Objects
 selection = BodySelection.Create(GetRootPart().Bodies[8])
 result = Combine.RemoveRegions(selection)
+# EndBlock
+
+# Delete Selection
+selection = EdgeSelection.Create(GetRootPart().Bodies[0].Edges[9])
+result = Delete.Execute(selection)
+# EndBlock
+
+# Create Named Selection Group
+primarySelection = FaceSelection.Create([GetRootPart().Bodies[0].Faces[3],
+	GetRootPart().Bodies[2].Faces[0],
+	GetRootPart().Bodies[1].Faces[0]])
+secondarySelection = Selection.Empty()
+result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
