@@ -1,5 +1,5 @@
 """Some minor functions to test the script working"""
-from random import randint, randrange
+from random import randint, choice
 
 
 def test_values_for_orm(model_type='Shell'):
@@ -30,10 +30,14 @@ def test_values_for_orm(model_type='Shell'):
 
 
 def generate_test_angles(value):
+    angles_range = [-89.0]
+    step = 180 / 64
+    for i in range(1, 64):
+        angles_range.append(angles_range[i - 1] + step)
     angles = ''
     for i in range(value):
         if i < (value - 1):
-            angles = angles + str(randrange(0, 91, 15)) + ', '
+            angles = angles + str(choice(angles_range)) + ', '
         else:
-            angles = angles + str(randrange(0, 91, 15))
+            angles = angles + str(choice(angles_range))
     return angles

@@ -11,9 +11,14 @@ How start_calculation actually works:
 """
 
 import os
+import sys
+
+current_path = os.path.dirname(__file__)
+sys.path.append(current_path)
+sys.path.append(os.path.join(current_path, 'models'))
 
 from models import database_creation
-from models.my_orm import LangeronTable, ShellTable
+from models.my_orm import BaseModel
 from models import langeron
 from models import shell
 from test import test_values_for_orm
@@ -139,9 +144,16 @@ test_list = []
 database_creation.create_table('experiment.sqlite')
 for i in range(20):
     test_list.append(test_values_for_orm(model_type='Shell'))
-ShellTable.objects.bulk_insert(test_list)
-a = LangeronTable.objects.execute_series('test_langeron')
-b = ShellTable.objects.execute_series('test_shell')
+a = BaseModel('shell')
+print(dir(a))
+a.bulk_insert(insert_list=test_list)
+test_list = []
+for i in range(20):
+    test_list.append(test_values_for_orm(model_type='Langeron'))
+b = BaseModel('langeron')
+b.bulk_insert(insert_list=test_list)
+a, b = b.execute_series(series_param='test_langeron'), a.execute_series(series_param='test_shell')
+
 # Start the db test
 objects_list_1 = []
 objects_list_2 = []
@@ -150,8 +162,8 @@ for el in a.fetchall():
 for el in b.fetchall():
     objects_list_2.append(shell.ShellModel(el))
 tmp1 = objects_list_1[0]
-tmp1.shell_angles = '45, 45, 45'
+print(tmp1.shell_angles)
 tmp1.update_values()
 tmp2 = objects_list_2[0]
-tmp2.shell_angles = '30, 30, 30'
+print(tmp2.shell_angles)
 tmp2.update_values()
