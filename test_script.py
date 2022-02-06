@@ -16,6 +16,7 @@ import sys
 current_path = os.path.dirname(__file__)
 sys.path.append(current_path)
 sys.path.append(os.path.join(current_path, 'models'))
+os.chdir(current_path)
 
 from models import database_creation
 from models.my_orm import BaseModel
@@ -142,13 +143,12 @@ def update_acp_post():
 # recreate_geometry('Geom', 'Geometry', geometry_script_path_vertical, 'Geometry update success', 'Geometry failed')
 test_list = []
 database_creation.create_table('experiment.sqlite')
-for i in range(20):
+for i in range(1):
     test_list.append(test_values_for_orm(model_type='Shell'))
 a = BaseModel('shell')
-print(dir(a))
 a.bulk_insert(insert_list=test_list)
 test_list = []
-for i in range(20):
+for i in range(1):
     test_list.append(test_values_for_orm(model_type='Langeron'))
 b = BaseModel('langeron')
 b.bulk_insert(insert_list=test_list)
