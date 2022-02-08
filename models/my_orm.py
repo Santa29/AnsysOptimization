@@ -46,7 +46,6 @@ class BaseModel:
         values_placeholder_format = values_placeholder_format[:-2]
 
         query = "INSERT INTO {} ({}) \nVALUES {};".format(self.table_name, fields_format, values_placeholder_format)
-        print(query)
         cursor.execute(query)
         conn.commit()
 

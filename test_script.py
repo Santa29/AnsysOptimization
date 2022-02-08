@@ -16,7 +16,10 @@ import sys
 current_path = os.path.dirname(__file__)
 sys.path.append(current_path)
 sys.path.append(os.path.join(current_path, 'models'))
-os.chdir(current_path)
+try:
+    os.chdir(current_path)
+except:
+    pass
 
 from models import database_creation
 from models.my_orm import BaseModel
@@ -27,10 +30,9 @@ from test import test_values_for_orm
 dir_path = os.path.dirname(os.path.abspath(__file__))
 log_path = os.path.join(dir_path, 'scripts', 'log.txt')
 acp_pre_path = os.path.join(dir_path, 'acp_pre.py')
-acp_post_path = os.path.join(dir_path,  'acp_post.py')
 geometry_script_path_vertical = os.path.join(dir_path, 'scripts', 'geometry_creation.py')
 geometry_script_path_horizontal = os.path.join(dir_path, 'scripts', 'geometry_creation_rotate_bodies.py')
-db_path = os.path.join(dir_path, 'experiment.db')
+db_path = os.path.join(dir_path, 'experiment.sqlite')
 
 
 def logging(message):
@@ -38,34 +40,6 @@ def logging(message):
     f = open(log_path, 'a')
     f.write(message + '\n')
     f.close()
-
-
-def update_acp_pre():
-    """This function update the ACP pre window by running the acp_pre.py"""
-    try:
-        system1 = GetSystem(Name="ACP-Pre")
-        setup1 = system1.GetContainer(ComponentName="Setup")
-        setup1.RunScript(ScriptPath=acp_pre_path)
-    except:
-        logging('Update ACP failed')
-    else:
-        logging('Update ACP success')
-
-
-def recreate_geometry(name, component, script_path, message_success, message_fail):
-    try:
-        system = GetSystem(Name=name)
-        geometry = system.GetContainer(ComponentName=component)
-        geometry.Edit(IsSpaceClaimGeometry=True)
-        DSscript = open(script_path, "r")
-        DSscriptcommand = DSscript.read()
-        DSscript.close()
-        geometry.SendCommand(Command=DSscriptcommand, Language="Python")
-        # geometry.Exit()
-    except:
-        logging(message_fail)
-    else:
-        logging(message_success)
 
 
 def update_component(name, container_list):
@@ -94,32 +68,9 @@ def update_project():
     """This function update the project in Workbench window"""
     try:
         update_component('ACP-Pre', ('Setup', 'Geometry', 'Model', 'Results', 'Engineering Data'))
-        Parameters.SetDesignPointsOutOfDate()
-        system2 = GetSystem(Name="ACP-Post")
-        results1 = system2.GetContainer(ComponentName="Results")
-        system3 = GetSystem(Name="CFX")
-        mesh1 = system3.GetContainer(ComponentName="Mesh")
-        setup2 = system3.GetContainer(ComponentName="Setup")
-        solution1 = system3.GetContainer(ComponentName="Solution")
-        results2 = system3.GetContainer(ComponentName="Results")
-        system4 = GetSystem(Name="SYS")
-        model2 = system4.GetContainer(ComponentName="Model")
-        setup3 = system4.GetContainer(ComponentName="Setup")
-        solution2 = system4.GetContainer(ComponentName="Solution")
-        results3 = system4.GetContainer(ComponentName="Results")
-        Parameters.SetRetainedDesignPointDataInvalid(
-            InvalidContainers=[engineeringData1, geometry1, model1, results1, setup1, mesh1, setup2, solution1,
-                               results2, model2, setup3, solution2, results3])
-        setupComponent1 = system1.GetComponent(Name="Setup")
-        modelComponent1 = system4.GetComponent(Name="Model")
-        setupComponent2 = system4.GetComponent(Name="Setup")
-        solutionComponent1 = system4.GetComponent(Name="Solution")
-        resultsComponent1 = system4.GetComponent(Name="Results")
-        resultsComponent2 = system2.GetComponent(Name="Results")
-        MarkComponentsOutOfDateForDps(
-            Components=[setupComponent1, modelComponent1, setupComponent2, solutionComponent1, resultsComponent1,
-                        resultsComponent2])
-        Parameters.SetPartiallyRetainedDataInvalid(Containers=[setup1, model2, setup3, solution2, results3, results1])
+        run_script('ACP-pre', 'Setup 2', acp_pre_path, 'ACP-pre successful updated', 'ACP-pre failed to update')
+        run_script('ACP-Post', 'Results', acp_post_path, 'Get the values from ACP success', 'Error when trying get '
+                                                                                            'the values from ACP')
         Update()
     except:
         logging('Update_failing')
@@ -127,31 +78,57 @@ def update_project():
         logging('Update success')
 
 
-def update_acp_post():
-    """This function get the values from ACP Post window by running the acp_post.py"""
-    try:
-        system1 = GetSystem(Name="ACP-Post")
-        setup1 = system1.GetContainer(ComponentName="Results")
-        setup1.RunScript(ScriptPath=acp_post_path)
-    except:
-        logging('Error when trying get the values from ACP')
+def create_integer_code(field):
+    angles_range = [-89.0]
+    step = 180 / 64
+    for i in range(1, 64):
+        angles_range.append(angles_range[i - 1] + step)
+    result = ''
+    for angle in field.split(', '):
+        for i, el in enumerate(angles_range):
+            if float(angle) == el:
+                result += str(i + 11)
+    if len(result) <= 8:
+        return result
     else:
-        logging('Get the values from ACP success')
+        return result[0:8], result[8:]
+
+
+def split_integer_id_to_list(integer_id):
+    if len(integer_id) <= 8:
+        tmp = []
+        for i in range(0, len(integer_id), 2):
+            tmp.append(int(integer_id[i:i + 2]))
+        return tmp
+    else:
+        tmp_1, tmp_2 = [], []
+        for i in range(0, len(integer_id), 2):
+            if i < 8:
+                tmp_1.append(int(integer_id[i:i + 2]))
+            else:
+                tmp_2.append(int(integer_id[i:i + 2]))
+        return tmp_1 + tmp_2
+
+
+def simple_generation():
+    test_list = []
+    for i in range(20):
+        test_list.append(test_values_for_orm(model_type='Shell'))
+    a = BaseModel('shell')
+    a.bulk_insert(insert_list=test_list)
+    for i in range(20):
+        test_list.append(test_values_for_orm(model_type='Langeron'))
+    test_list = []
+    b = BaseModel('langeron')
+    b.bulk_insert(insert_list=test_list)
 
 
 # update_component('ACP-Pre', ('Setup', 'Geometry', 'Model', 'Results', 'Engineering Data'))
 # recreate_geometry('Geom', 'Geometry', geometry_script_path_vertical, 'Geometry update success', 'Geometry failed')
-test_list = []
 database_creation.create_table('experiment.sqlite')
-for i in range(1):
-    test_list.append(test_values_for_orm(model_type='Shell'))
+
 a = BaseModel('shell')
-a.bulk_insert(insert_list=test_list)
-test_list = []
-for i in range(1):
-    test_list.append(test_values_for_orm(model_type='Langeron'))
 b = BaseModel('langeron')
-b.bulk_insert(insert_list=test_list)
 a, b = b.execute_series(series_param='test_langeron'), a.execute_series(series_param='test_shell')
 
 # Start the db test
@@ -162,8 +139,14 @@ for el in a.fetchall():
 for el in b.fetchall():
     objects_list_2.append(shell.ShellModel(el))
 tmp1 = objects_list_1[0]
-print(tmp1.shell_angles)
 tmp1.update_values()
 tmp2 = objects_list_2[0]
-print(tmp2.shell_angles)
 tmp2.update_values()
+value_1 = create_integer_code(tmp1.shell_angles)
+value_1 = split_integer_id_to_list(value_1)
+value_2, value_3 = create_integer_code(getattr(tmp1, 'langeron_angles'))
+value_2 = split_integer_id_to_list(value_2 + value_3)
+
+print(value_1, value_2)
+print(tmp1.shell_integer_code)
+print(tmp1.bytestring)

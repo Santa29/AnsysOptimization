@@ -31,11 +31,16 @@ class LangeronModel:
     def __init__(self, row):
         self.series = ''
         self.shell_angles = ''
+        self.langeron_angles = ''
         self.data = []
         for i, el in enumerate(row):
             setattr(self, self.initialization_list[i], el)
         self.model_name = self.name_autoincrement(self.series, self.shell_angles)
         self.creation_time = datetime.datetime.now().strftime('%Y/%m/%d/%H:%M:%S')
+        self.bytestring = ''
+        self.shell_integer_code = self.create_integer_code('shell_angles')
+        self.langeron_integer_code = self.create_integer_code('langeron_angles')
+        self._convert_to_bites()
 
     def __repr__(self):
         info = 'Langeron Series-{} Name-{}, Created-{}'.format(self.series, self.model_name, self.creation_time)
@@ -46,39 +51,78 @@ class LangeronModel:
         name = 'Series.' + series + ' Angles:' + shell_angles
         return name
 
-    @staticmethod
-    def decode_angles_to_list(value):
+    def decode_angles_to_list(self, value):
         list_of_angles = []
+        value = getattr(self, value)
         for el in value.split(', '):
             if el != '':
                 list_of_angles.append(el)
         return list_of_angles
 
-    @staticmethod
-    def encode_angles_from_list(angles_list):
+    def encode_angles_from_list(self, angles_list, field):
         value = ''
         for el in angles_list:
             value = value + el + ', '
         value = value[:-2]
-        return value
+        setattr(self, field, value)
 
     def create_integer_code(self, field):
+        """
+        Takes class field name, returns integer code in string, if there is up to 4 elements in field.
+        This need to set the parameters in acp_pre.
+        """
         angles_range = [-89.0]
         step = 180 / 64
         for i in range(1, 64):
             angles_range.append(angles_range[i - 1] + step)
         result = ''
-        for angle in self.decode_angles_to_list(field):
+        for angle in getattr(self, field).split(', '):
             for i, el in enumerate(angles_range):
-                if angle == el:
-                    result += str(i + 11)
-        if len(result) <= 8:
-            return int(result)
-        else:
-            return int(result[0:8]), int(result[8:])
+                if float(angle) == el:
+                    result += str(i)
+        return result
 
-    def convert_to_bites(self):
-        pass
+    def get_integer_code(self, field):
+        value = getattr(self, field)
+        if len(value) > 8:
+            return value[0:8], value[8:]
+        else:
+            return value
+
+    def _convert_to_bites(self):
+        """
+        Set the bytestring form of the class to interact with genetic algorithm.
+        """
+        length_dict = {
+            300: 3,
+            400: 4,
+            500: 5,
+            600: 6,
+            700: 7,
+            800: 8
+        }
+        argument = len(self.shell_angles)
+        self.bytestring += format(argument, '03b')
+        argument = []
+        for i in range(len(self.shell_integer_code), 2):
+            tmp = int(self.shell_integer_code[i: i + 2])
+            argument.append(tmp)
+        for el in argument:
+            self.bytestring += format(el, '06b')
+        self.bytestring += format(getattr(self, 'antiflatter_diam'), '02b')
+        argument = length_dict[getattr(self, 'antiflatter_length')]
+        self.bytestring += format(argument, '03b')
+        self.bytestring += format(getattr(self, 'antiflatter_value'), '03b')
+        argument = getattr(self, 'langeron_angles')
+        self.bytestring += format(len(argument), '03b')
+        argument = []
+        for i in range(len(self.langeron_integer_code), 2):
+            tmp = int(self.shell_integer_code[i: i + 2])
+            argument.append(tmp)
+        for el in argument:
+            self.bytestring += format(el, '06b')
+        self.bytestring += format(getattr(self, 'wall_length'), '05b')
+        self.bytestring += format(getattr(self, 'wall_angle'), '06b')
 
     def read_from_bites(self):
         pass

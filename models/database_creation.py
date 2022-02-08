@@ -10,7 +10,7 @@ def create_table(db_name):
         (id INTEGER PRIMARY KEY AUTOINCREMENT,
         langeron_angles TEXT,
         langeron_wall_angles TEXT,
-        wall_length REAL,
+        wall_length INTEGER,
         wall_angle INTEGER,
         polymer_volume_coordinate INTEGER,
         series TEXT,
@@ -22,6 +22,9 @@ def create_table(db_name):
         antiflatter_value INTEGER,
         antiflatter_diam INTEGER,
         antiflatter_length INTEGER,
+        bytestring TEXT,
+        shell_integer_code TEXT,
+        langeron_integer_code TEXT,
         creation_time TEXT);
     '''
 
@@ -39,6 +42,8 @@ def create_table(db_name):
         antiflatter_value INTEGER,
         antiflatter_diam INTEGER,
         antiflatter_length INTEGER,
+        bytestring TEXT,
+        shell_integer_code TEXT,
         creation_time TEXT);
     '''
 
