@@ -79,7 +79,7 @@ class LangeronModel:
         for angle in getattr(self, field).split(', '):
             for i, el in enumerate(angles_range):
                 if float(angle) == el:
-                    result += str(i)
+                    result += str(i + 11)
         return result
 
     def get_integer_code(self, field):
@@ -105,7 +105,7 @@ class LangeronModel:
         self.bytestring += format(argument, '03b')
         argument = []
         for i in range(len(self.shell_integer_code), 2):
-            tmp = int(self.shell_integer_code[i: i + 2])
+            tmp = int(self.shell_integer_code[i: i + 2]) - 11
             argument.append(tmp)
         for el in argument:
             self.bytestring += format(el, '06b')

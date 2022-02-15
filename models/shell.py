@@ -80,7 +80,7 @@ class ShellModel:
         self.bytestring += format(argument, '03b')
         argument = []
         for i in range(len(self.shell_integer_code), 2):
-            tmp = int(self.shell_integer_code[i: i + 2])
+            tmp = int(self.shell_integer_code[i: i + 2]) - 11
             argument.append(tmp)
         for el in argument:
             self.bytestring += format(el, '06b')
@@ -89,7 +89,7 @@ class ShellModel:
         self.bytestring += format(argument, '03b')
         self.bytestring += format(getattr(self, 'antiflatter_value'), '03b')
 
-    def read_from_bites(self):
+    def read_new_values_from_bitecode(self):
         pass
 
     def create_integer_code(self, field):

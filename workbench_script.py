@@ -3,10 +3,10 @@ Order to set the calculation begin:
 1.Run start_calculation()
 
 How start_calculation actually works:
-1.From test_script.py run update_acp_pre
+1.From workbench_script.py run update_acp_pre
 2.update_acp_pre call acp_pre.py
-3.From test_script.py run update_project
-4.From test_script.py run update_acp_post
+3.From workbench_script.py run update_project
+4.From workbench_script.py run update_acp_post
 5.update_acp_post call acp_post.py
 """
 
@@ -23,9 +23,7 @@ except:
 
 from models import database_creation
 from models.my_orm import BaseModel
-from models import langeron
-from models import shell
-from test import test_values_for_orm
+from models import current_item
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
 log_path = os.path.join(dir_path, 'scripts', 'log.txt')
@@ -57,41 +55,61 @@ def run_script(name, component, script_path, message_success, message_fail):
     try:
         system1 = GetSystem(Name=name)
         setup1 = system1.GetContainer(ComponentName=component)
+        system1 = GetSystem(Name="Geom 3")
+        geometry1 = system1.GetContainer(ComponentName="Geometry")
+        geometry1.Edit(IsSpaceClaimGeometry=True)
         setup1.RunScript(ScriptPath=script_path)
+        geometry1.Exit()
     except:
         logging(message_fail)
     else:
         logging(message_success)
 
 
+def recreate_geometry(name, component, parameters_list, message_success, message_fail):
+    """This function run script in the current module with the current name"""
+    try:
+        system = GetSystem(Name=name)
+        geometry = system.GetContainer(ComponentName=component)
+        for element_id, value in parameters_list:
+            change_parameter(element_id, value)
+        geometry.Edit(IsSpaceClaimGeometry=True)
+        geometry.Exit()
+    except:
+        logging(message_fail)
+    else:
+        logging(message_success)
+
+
+def change_parameter(param_id, value):
+    designPoint1 = Parameters.GetDesignPoint(Name="0")
+    parameter1 = Parameters.GetParameter(Name=param_id)
+    designPoint1.SetParameterExpression(
+        Parameter=parameter1,
+        Expression=value)
+
+
 def update_project():
     """This function update the project in Workbench window"""
     try:
-        update_component('ACP-Pre', ('Setup', 'Geometry', 'Model', 'Results', 'Engineering Data'))
-        run_script('ACP-pre', 'Setup 2', acp_pre_path, 'ACP-pre successful updated', 'ACP-pre failed to update')
-        run_script('ACP-Post', 'Results', acp_post_path, 'Get the values from ACP success', 'Error when trying get '
-                                                                                            'the values from ACP')
+        recreate_geometry('Geom 3',
+                          'Geometry 5',
+                          ('P13', '30'),
+                          'geometry recreation success in vertical',
+                          'geometry recreation fail in vertical')
+
+        recreate_geometry('Geom 2',
+                          'Geometry 4',
+                          ('P19', '30'),
+                          'geometry recreation success in vertical',
+                          'geometry recreation fail in vertical')
+        run_script('ACP-pre-1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
+        run_script('ACP-pre', 'Setup 2', acp_pre_path, 'ACP-pre-vert successful updated', 'ACP-pre failed to update')
         Update()
     except:
         logging('Update_failing')
     else:
         logging('Update success')
-
-
-def create_integer_code(field):
-    angles_range = [-89.0]
-    step = 180 / 64
-    for i in range(1, 64):
-        angles_range.append(angles_range[i - 1] + step)
-    result = ''
-    for angle in field.split(', '):
-        for i, el in enumerate(angles_range):
-            if float(angle) == el:
-                result += str(i + 11)
-    if len(result) <= 8:
-        return result
-    else:
-        return result[0:8], result[8:]
 
 
 def split_integer_id_to_list(integer_id):
@@ -110,43 +128,11 @@ def split_integer_id_to_list(integer_id):
         return tmp_1 + tmp_2
 
 
-def simple_generation():
-    test_list = []
-    for i in range(20):
-        test_list.append(test_values_for_orm(model_type='Shell'))
-    a = BaseModel('shell')
-    a.bulk_insert(insert_list=test_list)
-    for i in range(20):
-        test_list.append(test_values_for_orm(model_type='Langeron'))
-    test_list = []
-    b = BaseModel('langeron')
-    b.bulk_insert(insert_list=test_list)
-
-
-# update_component('ACP-Pre', ('Setup', 'Geometry', 'Model', 'Results', 'Engineering Data'))
-# recreate_geometry('Geom', 'Geometry', geometry_script_path_vertical, 'Geometry update success', 'Geometry failed')
 database_creation.create_table('experiment.sqlite')
 
 a = BaseModel('shell')
 b = BaseModel('langeron')
-a, b = b.execute_series(series_param='test_langeron'), a.execute_series(series_param='test_shell')
-
-# Start the db test
-objects_list_1 = []
-objects_list_2 = []
-for el in a.fetchall():
-    objects_list_1.append(langeron.LangeronModel(el))
-for el in b.fetchall():
-    objects_list_2.append(shell.ShellModel(el))
-tmp1 = objects_list_1[0]
-tmp1.update_values()
-tmp2 = objects_list_2[0]
-tmp2.update_values()
-value_1 = create_integer_code(tmp1.shell_angles)
-value_1 = split_integer_id_to_list(value_1)
-value_2, value_3 = create_integer_code(getattr(tmp1, 'langeron_angles'))
-value_2 = split_integer_id_to_list(value_2 + value_3)
-
-print(value_1, value_2)
-print(tmp1.shell_integer_code)
-print(tmp1.bytestring)
+current_table = BaseModel('current_item')
+current_object = current_table.select_by_id(1)
+object_to_calculate = current_item.CurrentItemModel(current_object.fetchall())
+update_project()

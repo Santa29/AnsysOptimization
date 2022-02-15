@@ -48,4 +48,29 @@ def create_table(db_name):
     '''
 
     cursor.execute(query)
+
+    query = '''
+        CREATE TABLE IF NOT EXISTS current_item
+            (id INTEGER PRIMARY KEY AUTOINCREMENT,
+            langeron_angles TEXT,
+            langeron_wall_angles TEXT,
+            wall_length INTEGER,
+            wall_angle INTEGER,
+            polymer_volume_coordinate INTEGER,
+            series TEXT,
+            model_name TEXT,
+            shell_angles TEXT,
+            value_vertical REAL,
+            value_horizontal REAL,
+            value_spectrum_modal REAL,
+            antiflatter_value INTEGER,
+            antiflatter_diam INTEGER,
+            antiflatter_length INTEGER,
+            bytestring TEXT,
+            shell_integer_code TEXT,
+            langeron_integer_code TEXT,
+            creation_time TEXT);
+        '''
+
+    cursor.execute(query)
     conn.commit()
