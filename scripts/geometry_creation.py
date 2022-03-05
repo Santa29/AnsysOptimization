@@ -1,10 +1,4 @@
 
-
-
-
-
-
-
 # Python Script, API Version = V19
 # Python Script, API Version = V19
 ClearAll()
@@ -534,7 +528,7 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group1", "Fixed support")
+result = NamedSelection.Rename("Группа1", "Fixed support")
 # EndBlock
 
 # Create Named Selection Group
@@ -546,7 +540,7 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group1", "Composite")
+result = NamedSelection.Rename("Группа1", "Composite")
 # EndBlock
 
 # Create Named Selection Group
@@ -556,7 +550,7 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group1", "Epoxy")
+result = NamedSelection.Rename("Группа1", "Epoxy")
 # EndBlock
 
 # Create Named Selection Group
@@ -567,7 +561,7 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group1", "Fullfillment")
+result = NamedSelection.Rename("Группа1", "Fullfillment")
 # EndBlock
 
 # Create Named Selection Group
@@ -577,7 +571,7 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group1", "Antiflatter")
+result = NamedSelection.Rename("Группа1", "Antiflatter")
 # EndBlock
 
 # Delete Selection
@@ -605,7 +599,7 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group1", "Langeron")
+result = NamedSelection.Rename("Группа1", "Langeron")
 # EndBlock
 
 # Create Named Selection Group
@@ -615,7 +609,7 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group1", "Shell")
+result = NamedSelection.Rename("Группа1", "Shell")
 # EndBlock
 
 # Create Named Selection Group
@@ -625,20 +619,20 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group1", "Langeron_wall")
+result = NamedSelection.Rename("Группа1", "Langeron_wall")
 # EndBlock
 
 # Create Named Selection Group
 primarySelection = FaceSelection.Create([GetRootPart().Bodies[5].Faces[2],
-	GetRootPart().Bodies[4].Faces[3],
-	GetRootPart().Bodies[3].Faces[2],
-	GetRootPart().Bodies[3].Faces[1],
-	GetRootPart().Bodies[4].Faces[1],
-	GetRootPart().Bodies[5].Faces[0]])
+    GetRootPart().Bodies[4].Faces[3],
+    GetRootPart().Bodies[3].Faces[2],
+    GetRootPart().Bodies[3].Faces[1],
+    GetRootPart().Bodies[4].Faces[1],
+    GetRootPart().Bodies[5].Faces[0]])
 secondarySelection = Selection.Empty()
 result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group1", "Pressure")
+result = NamedSelection.Rename("Группа1", "Pressure")
 # EndBlock

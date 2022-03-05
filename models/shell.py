@@ -4,7 +4,7 @@ This module provides the interface to easy interaction with DB.
 
 import datetime
 
-from my_orm import BaseModel
+from .my_orm import BaseModel
 
 
 class ShellModel:
@@ -20,6 +20,7 @@ class ShellModel:
         'antiflatter_value',
         'antiflatter_diam',
         'antiflatter_length',
+        'bytestring',
         'creation_time'
     ]
 

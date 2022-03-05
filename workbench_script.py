@@ -23,7 +23,8 @@ except:
 
 from models import database_creation
 from models.my_orm import BaseModel
-from models import current_item
+from models.langeron import LangeronModel
+from models.shell import ShellModel
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
 log_path = os.path.join(dir_path, 'scripts', 'log.txt')
@@ -130,9 +131,13 @@ def split_integer_id_to_list(integer_id):
 
 database_creation.create_table('experiment.sqlite')
 
-a = BaseModel('shell')
-b = BaseModel('langeron')
-current_table = BaseModel('current_item')
-current_object = current_table.select_by_id(1)
-object_to_calculate = current_item.CurrentItemModel(current_object.fetchall())
-update_project()
+a = BaseModel('langeron')
+current_object_list = []
+for i in range(1, 21):
+    temp = a.select_by_id(i).fetchall()
+    current_object_list.append(LangeronModel(temp))
+
+for el in current_object_list:
+    print(el.__getattribute__('shell_angles'))
+print(current_object_list)
+# update_project()

@@ -23,8 +23,6 @@ def create_table(db_name):
         antiflatter_diam INTEGER,
         antiflatter_length INTEGER,
         bytestring TEXT,
-        shell_integer_code TEXT,
-        langeron_integer_code TEXT,
         creation_time TEXT);
     '''
 
@@ -43,7 +41,6 @@ def create_table(db_name):
         antiflatter_diam INTEGER,
         antiflatter_length INTEGER,
         bytestring TEXT,
-        shell_integer_code TEXT,
         creation_time TEXT);
     '''
 
@@ -67,8 +64,6 @@ def create_table(db_name):
             antiflatter_diam INTEGER,
             antiflatter_length INTEGER,
             bytestring TEXT,
-            shell_integer_code TEXT,
-            langeron_integer_code TEXT,
             creation_time TEXT);
         '''
 

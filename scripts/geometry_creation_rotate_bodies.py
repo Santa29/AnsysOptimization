@@ -1,6 +1,3 @@
-
-
-
 # Python Script, API Version = V19
 # Python Script, API Version = V19
 ClearAll()
@@ -550,25 +547,25 @@ result = Delete.Execute(selection)
 
 # 
 result = Midsurface.Convert(BodySelection.Create([GetRootPart().Bodies[3],
-	GetRootPart().Bodies[4],
-	GetRootPart().Bodies[5]]), MM(1))
+    GetRootPart().Bodies[4],
+    GetRootPart().Bodies[5]]), MM(1))
 # EndBlock
 
 # Create Named Selection Group
 primarySelection = FaceSelection.Create([GetRootPart().Bodies[4].Faces[3],
-	GetRootPart().Bodies[3].Faces[2],
-	GetRootPart().Bodies[2].Faces[0],
-	GetRootPart().Bodies[0].Faces[3],
-	GetRootPart().Bodies[4].Faces[1],
-	GetRootPart().Bodies[3].Faces[1],
-	GetRootPart().Bodies[3].Faces[0],
-	GetRootPart().Bodies[4].Faces[2]])
+    GetRootPart().Bodies[3].Faces[2],
+    GetRootPart().Bodies[2].Faces[0],
+    GetRootPart().Bodies[0].Faces[3],
+    GetRootPart().Bodies[4].Faces[1],
+    GetRootPart().Bodies[3].Faces[1],
+    GetRootPart().Bodies[3].Faces[0],
+    GetRootPart().Bodies[4].Faces[2]])
 secondarySelection = Selection.Empty()
 result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group2", "Langeron")
+result = NamedSelection.Rename("Группа2", "Langeron")
 # EndBlock
 
 # Create Named Selection Group
@@ -578,7 +575,7 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group2", "Antiflatter")
+result = NamedSelection.Rename("Группа2", "Antiflatter")
 # EndBlock
 
 # Create Named Selection Group
@@ -588,34 +585,34 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group2", "Shell")
+result = NamedSelection.Rename("Группа2", "Shell")
 # EndBlock
 
 # Create Named Selection Group
 primarySelection = BodySelection.Create([GetRootPart().Bodies[3],
-	GetRootPart().Bodies[4],
-	GetRootPart().Bodies[5]])
+    GetRootPart().Bodies[4],
+    GetRootPart().Bodies[5]])
 secondarySelection = Selection.Empty()
 result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group2", "Composite")
+result = NamedSelection.Rename("Группа2", "Composite")
 # EndBlock
 
 # Create Named Selection Group
 primarySelection = FaceSelection.Create([GetRootPart().Bodies[5].Faces[2],
-	GetRootPart().Bodies[4].Faces[3],
-	GetRootPart().Bodies[3].Faces[2],
-	GetRootPart().Bodies[3].Faces[1],
-	GetRootPart().Bodies[4].Faces[1],
-	GetRootPart().Bodies[5].Faces[0]])
+    GetRootPart().Bodies[4].Faces[3],
+    GetRootPart().Bodies[3].Faces[2],
+    GetRootPart().Bodies[3].Faces[1],
+    GetRootPart().Bodies[4].Faces[1],
+    GetRootPart().Bodies[5].Faces[0]])
 secondarySelection = Selection.Empty()
 result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group2", "Pressure")
+result = NamedSelection.Rename("Группа2", "Pressure")
 # EndBlock
 
 # Create Named Selection Group
@@ -625,18 +622,18 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group2", "Epoxy")
+result = NamedSelection.Rename("Группа2", "Epoxy")
 # EndBlock
 
 # Create Named Selection Group
 primarySelection = BodySelection.Create([GetRootPart().Bodies[1],
-	GetRootPart().Bodies[2]])
+    GetRootPart().Bodies[2]])
 secondarySelection = Selection.Empty()
 result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group2", "Fullfillment")
+result = NamedSelection.Rename("Группа2", "Fullfillment")
 # EndBlock
 
 # Create Named Selection Group
@@ -646,5 +643,5 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Group2", "Langeron_wall")
+result = NamedSelection.Rename("Группа2", "Langeron_wall")
 # EndBlock
