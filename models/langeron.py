@@ -106,8 +106,7 @@ class LangeronModel:
             400: 4,
             500: 5,
             600: 6,
-            700: 7,
-            800: 8
+            700: 7
         }
         self.bytestring += format(int(len(self.shell_integer_code) / 2), '04b')
         self.bytestring += format(int(len(self.langeron_integer_code) / 2), '04b')
@@ -119,7 +118,7 @@ class LangeronModel:
             self.bytestring += format(el, '06b')
         self.bytestring += format(getattr(self, 'antiflatter_diam'), '03b')
         argument = length_dict[getattr(self, 'antiflatter_length')]
-        self.bytestring += format(argument, '04b')
+        self.bytestring += format(argument, '03b')
         self.bytestring += format(getattr(self, 'antiflatter_value'), '03b')
         argument = []
         for i in range(0, len(self.langeron_integer_code), 2):
@@ -148,7 +147,7 @@ class LangeronModel:
         }
         temporary_value = 8
         for i in range(number_of_shell_layers):
-            temporary_list.append(int(income_bytestring[temporary_value + i: temporary_value + i + 6], 2) + 10)
+            temporary_list.append(int(income_bytestring[temporary_value: temporary_value + 6], 2) + 10)
             temporary_value += 6
         for el in temporary_list:
             result_dict['shell_integer_code'] += str(el)
@@ -156,15 +155,15 @@ class LangeronModel:
         result_dict['antiflatter_diam'] = int(income_bytestring[temporary_value:temporary_value + 3], 2)
         temporary_value += 3
         # Read antiflatter_length
-        result_dict['antiflatter_length'] = int(income_bytestring[temporary_value: temporary_value + 4], 2) * 100
-        temporary_value += 4
+        result_dict['antiflatter_length'] = int(income_bytestring[temporary_value: temporary_value + 3], 2) * 100
+        temporary_value += 3
         # Read antiflatter value
         result_dict['antiflatter_value'] = int(income_bytestring[temporary_value: temporary_value + 3], 2)
         temporary_value += 3
         # Read the values of langeron angles
         temporary_list = []
         for i in range(number_of_langeron_layers):
-            temporary_list.append(int(income_bytestring[temporary_value + i: temporary_value + i + 6], 2) + 10)
+            temporary_list.append(int(income_bytestring[temporary_value: temporary_value + 6], 2) + 10)
             temporary_value += 6
         for el in temporary_list:
             result_dict['langeron_integer_code'] += str(el)

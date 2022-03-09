@@ -41,7 +41,7 @@ class TestLangeron(unittest.TestCase):
 
     def test_create_integer_code(self):
         self.assertEqual(self.langeron.create_integer_code('shell_angles'), '202239')
-        self.assertEqual(self.langeron.create_integer_code('langeron_angles'), '2250435962')
+        self.assertEqual(self.langeron.create_integer_code('langeron_angles'), '2149594261')
 
     def test_get_attr(self):
         self.assertEqual(self.langeron.__getattribute__('shell_angles').split(', '), ['-60.875', '-55.25', '-7.4375'])
@@ -50,8 +50,8 @@ class TestLangeron(unittest.TestCase):
     def test_prepare_to_wb(self):
         self.langeron.prepare_to_wb()
         self.assertEqual(self.langeron.shell_integer_code, '202239')
-        self.assertEqual(self.langeron.langeron_integer_code, '2250435962')
-        self.assertEqual(self.langeron.bytestring, '00110101010100010110100111010010001111000111101110101011110101010010111')
+        self.assertEqual(self.langeron.langeron_integer_code, '2149594261')
+        self.assertEqual(self.langeron.bytestring, '0011010100101000110001110101010001100101110011111000110000011001101010010111')
 
     def test_read_from_bytes(self):
         self.langeron.prepare_to_wb()
