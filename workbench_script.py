@@ -137,7 +137,4 @@ for i in range(1, 21):
     temp = a.select_by_id(i).fetchall()
     current_object_list.append(LangeronModel(temp))
 
-for el in current_object_list:
-    print(el.__getattribute__('shell_angles'))
-print(current_object_list)
 # update_project()

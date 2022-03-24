@@ -18,12 +18,20 @@ def create_table(db_name):
         shell_angles TEXT,
         value_vertical REAL,
         value_horizontal REAL,
-        value_spectrum_modal REAL,
+        value_spectrum_modal_min TEXT,
+        value_spectrum_modal_max TEXT,
         antiflatter_value INTEGER,
         antiflatter_diam INTEGER,
         antiflatter_length INTEGER,
         bytestring TEXT,
-        creation_time TEXT);
+        creation_time TEXT,
+        mass INTEGER,
+        tip_flap REAL,
+        twist_tip REAL,
+        mass_center REAL,
+        cost REAL,
+        langeron_integer_code INTEGER,
+        shell_integer_code INTEGER);
     '''
 
     cursor.execute(query)
@@ -36,12 +44,18 @@ def create_table(db_name):
         shell_angles TEXT,
         value_vertical REAL,
         value_horizontal REAL,
-        value_spectrum_modal REAL,
+        value_spectrum_modal_min TEXT,
+        value_spectrum_modal_max TEXT,
         antiflatter_value INTEGER,
         antiflatter_diam INTEGER,
         antiflatter_length INTEGER,
         bytestring TEXT,
-        creation_time TEXT);
+        creation_time TEXT,
+        mass INTEGER,
+        tip_flap REAL,
+        twist_tip REAL,
+        mass_center REAL,
+        cost REAL);
     '''
 
     cursor.execute(query)
@@ -59,13 +73,25 @@ def create_table(db_name):
             shell_angles TEXT,
             value_vertical REAL,
             value_horizontal REAL,
-            value_spectrum_modal REAL,
+            value_spectrum_modal_min TEXT,
+            value_spectrum_modal_max TEXT,
             antiflatter_value INTEGER,
             antiflatter_diam INTEGER,
             antiflatter_length INTEGER,
             bytestring TEXT,
-            creation_time TEXT);
+            creation_time TEXT,
+            mass INTEGER,
+            tip_flap REAL,
+            twist_tip REAL,
+            mass_center REAL,
+            cost REAL,
+            langeron_integer_code INTEGER,
+            shell_integer_code INTEGER);
         '''
 
     cursor.execute(query)
     conn.commit()
+
+
+if __name__ == '__main__':
+    create_table('experiment.sqlite')

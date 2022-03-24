@@ -30,7 +30,7 @@ class GeneticAlgorithm:
         d = population_size * f_max - total_parents_cost
         p_selection = []
         for i in range(0, population_size):
-            p_selection[i] = (f_max - self.parents[i].get_cost()) / d
+            p_selection.append((f_max - self.parents[i].get_cost()) / d)
 
         # Creating the roulette
         indices_parents = [0, 1]
@@ -50,8 +50,8 @@ class GeneticAlgorithm:
     def crossover(self, indices_parents):
         ch = [self.parents[indices_parents[0]], self.parents[indices_parents[1]]]
         crossover_points = [
-            randint(0, ch[0].get_size_in_bits()),
-            randint(0, ch[0].get_size_in_bits())
+            randint(0, len(ch[0].bytestring)),
+            randint(0, len(ch[0].bytestring))
         ]
         if crossover_points[0] > crossover_points[1]:
             crossover_points[0], crossover_points[1] = crossover_points[1], crossover_points[0]
@@ -63,7 +63,7 @@ class GeneticAlgorithm:
 
     def mutation(self):
         for child in self.children:
-            for i in range(0, child.get_size_in_bits()):
+            for i in range(0, len(child.bytestring)):
                 if randint(1, 100) <= 100 * self.mutation_rate:
                     if child.binary_encoding[i]:
                         child.binary_encoding[i] = False

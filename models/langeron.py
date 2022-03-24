@@ -3,8 +3,34 @@ This module provides the interface to easy interaction with DB.
 """
 
 import datetime
+import math
 
 from .my_orm import BaseModel
+
+BASELINE_MASS = 430
+BASELINE_VALUE_SPECTRUM = 6
+OMEGA_MAX = 146.9
+OMEGA_MIN = 115.4
+R_NF = 1
+BETA_NF = 2
+BASELINE_SAFETY = 2.6
+MAX_BIAS_TIP_FLAP = 15
+R_BTF = 1
+betaBTF = 2
+r_twist = 1
+beta_twist = 2
+MAX_TIP_TWIST = 10
+BASE_MASS_CENTER = 113
+# Cost functions parameters
+WEIGHT_MASS = 0.25
+WEIGHT_NATURAL_FREQUENCIES = 0.25
+WEIGHT_AEROELASTIC_STABILITY = 0.25
+WEIGHT_STRENGTH = 0.25
+
+WEIGHT_SIGMA = 0.25
+WEIGHT_UZ = 0.25
+WEIGHT_UR = 0.25
+WEIGHT_UTWIST = 0.25
 
 
 class LangeronModel:
@@ -21,22 +47,43 @@ class LangeronModel:
         'shell_angles',
         'value_vertical',
         'value_horizontal',
-        'value_spectrum_modal',
+        'value_spectrum_modal_min',
+        'value_spectrum_modal_max',
         'antiflatter_value',
         'antiflatter_diam',
         'antiflatter_length',
         'bytestring',
         'creation_time',
+        'mass',
+        'tip_flap',
+        'twist_tip',
+        'mass_center',
+        'cost',
+        'langeron_integer_code',
+        'shell_integer_code'
     ]
 
     def __init__(self, row):
         self.series = ''
         self.shell_angles = ''
         self.langeron_angles = ''
+        self.langeron_wall_angles = ''
+        self.wall_angle = 0.0
+        self.wall_length = 0
+        self.polymer_volume_coordinate = 0
         self.data = []
+        self.mass = 0
+        self.value_spectrum_modal_min = ''
+        self.value_spectrum_modal_max = ''
+        self.value_vertical = 0.0
+        self.value_horizontal = 0.0
+        self.tip_flap = 0.0
+        self.twist_tip = 0.0
+        self.mass_center = 0.0
+        self.cost = 0.0
         for i, el in enumerate(row):
             setattr(self, self.initialization_list[i], el)
-        self.model_name = self.name_autoincrement(self.series, self.shell_angles)
+        self.model_name = self.name_autoincrement()
         self.creation_time = datetime.datetime.now().strftime('%Y/%m/%d/%H:%M:%S')
         self.bytestring = ''
         self.shell_integer_code = ''
@@ -56,9 +103,8 @@ class LangeronModel:
         self.langeron_integer_code = self.create_integer_code('langeron_angles')
         self._convert_to_bites()
 
-    @staticmethod
-    def name_autoincrement(series, shell_angles):
-        name = 'Series.' + series + ' Angles:' + shell_angles
+    def name_autoincrement(self):
+        name = 'Series.' + str(self.series) + ' Angles:' + str(self.shell_angles)
         return name
 
     def create_angles_range(self):
@@ -173,6 +219,9 @@ class LangeronModel:
         # Read wall_angle
         result_dict['wall_angle'] = int(income_bytestring[temporary_value:], 2)
 
+        for key, value in result_dict.items():
+            setattr(self, key, value)
+
         return result_dict
 
     def update_values(self):
@@ -181,3 +230,61 @@ class LangeronModel:
             data_to_update[el] = getattr(self, el)
         tmp = BaseModel('langeron')
         tmp.update(new_data=data_to_update)
+
+    def cost_mass(self):
+        self.mass = int(self.mass)
+        return self.mass / BASELINE_MASS
+
+    def cost_natural_frequencies(self):
+        minimum_distance = math.inf
+        n_f_max = []
+        n_f_min = []
+        for el in self.value_spectrum_modal_max.split(', '):
+            n_f_max.append(float(el))
+        for el in self.value_spectrum_modal_min.split(', '):
+            n_f_min.append(float(el))
+        for i in range(BASELINE_VALUE_SPECTRUM):
+            a = (n_f_max[i] - n_f_min[i]) / (OMEGA_MAX ** 2 - OMEGA_MIN ** 2)
+            b = n_f_min[i] - a * OMEGA_MIN ** 2
+            for k in range(10):
+                d = k ** 2 - 4 * a * b
+                if d < 0:
+                    continue
+                omega_res_1 = (k - math.sqrt(d)) / (2 * a)
+                omega_res_2 = (k + math.sqrt(d)) / (2 * a)
+                dist = min(abs((OMEGA_MIN + OMEGA_MAX) / 2 - omega_res_1), abs(omega_res_2 - (OMEGA_MIN + OMEGA_MAX) / 2))
+                if dist < minimum_distance:
+                    minimum_distance = dist
+        cost = - minimum_distance / ((OMEGA_MAX - OMEGA_MIN) / 2)
+        penalty = R_NF * math.pow(max(0.0, cost + 1.1), BETA_NF)
+        return cost + penalty
+
+    def cost_stress(self):
+        self.value_vertical = float(self.value_vertical)
+        self.value_horizontal = float(self.value_horizontal)
+        return min(self.value_vertical, self.value_horizontal) / BASELINE_SAFETY
+
+    def cost_aeroelastic_stability(self):
+        self.mass_center = float(self.mass_center)
+        return self.mass_center / BASE_MASS_CENTER
+
+    def cost_penalty(self):
+        self.value_vertical = float(self.value_vertical)
+        self.value_horizontal = float(self.value_horizontal)
+        self.tip_flap = float(self.tip_flap)
+        self.twist_tip = float(self.twist_tip)
+        safety_factor = max(self.value_vertical, self.value_horizontal)
+        safety_factor_utopia = (self.value_horizontal + self.value_vertical) / 2
+        delta_safety_factor = (self.value_horizontal - self.value_vertical) / 2
+        g_strength = R_NF * pow(max(0.0, (abs(safety_factor - safety_factor_utopia) - delta_safety_factor) / delta_safety_factor), BETA_NF)
+        g_uz = R_BTF * pow(max(0.0, (abs(self.tip_flap) - MAX_BIAS_TIP_FLAP) / MAX_BIAS_TIP_FLAP), betaBTF)
+        g_u_twist = pow(max(0.0, abs(self.twist_tip - MAX_TIP_TWIST) / MAX_TIP_TWIST), beta_twist)
+        return WEIGHT_STRENGTH * g_strength + WEIGHT_UZ * g_u_twist + WEIGHT_UTWIST * g_uz
+
+    def get_cost(self):
+        result = WEIGHT_MASS * self.cost_mass() + WEIGHT_NATURAL_FREQUENCIES * self.cost_natural_frequencies()
+        result += WEIGHT_AEROELASTIC_STABILITY * self.cost_aeroelastic_stability()
+        result += WEIGHT_STRENGTH * self.cost_stress()
+        result += self.cost_penalty()
+        self.cost = result
+        return result

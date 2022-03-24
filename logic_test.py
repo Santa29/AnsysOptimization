@@ -1,8 +1,22 @@
+import os
+import sys
+
+current_path = os.path.dirname(__file__)
+sys.path.append(current_path)
+sys.path.append(os.path.join(current_path, 'models'))
+try:
+    os.chdir(current_path)
+except:
+    pass
+
 import unittest
+from test import test_values_for_logic_test
 from random import randint
 
 from models.my_orm import BaseModel
 from models.langeron import LangeronModel
+from optimization.genetic_algorithm import GeneticAlgorithm
+from optimization.variables import population_size
 
 
 class TestLangeron(unittest.TestCase):
@@ -19,12 +33,18 @@ class TestLangeron(unittest.TestCase):
                           'shell_angles': '-60.875, -55.25, -7.4375',
                           'value_vertical': '',
                           'value_horizontal': '',
-                          'value_spectrum_modal': '',
+                          'value_spectrum_modal_min': '',
+                          'value_spectrum_modal_max': '',
                           'antiflatter_value': 3,
                           'antiflatter_diam': 2,
                           'antiflatter_length': 400,
                           'bytestring': '',
-                          'creation_time': ''}
+                          'creation_time': '',
+                          'mass': 430,
+                          'tip_flap': 40.0,
+                          'twist_tip': 15.0,
+                          'mass_center': 110
+                          }
         self.langeron = LangeronModel(self.test_case.values())
 
     def test_model_creation(self):
@@ -37,7 +57,8 @@ class TestLangeron(unittest.TestCase):
 
     def test_decode_angles_to_list(self):
         self.assertEqual(self.langeron.decode_angles_to_list('shell_angles'), ['-60.875', '-55.25', '-7.4375'])
-        self.assertEqual(self.langeron.decode_angles_to_list('langeron_angles'), ['-58.0625', '20.6875', '48.8125', '1.0', '54.4375'])
+        self.assertEqual(self.langeron.decode_angles_to_list('langeron_angles'),
+                         ['-58.0625', '20.6875', '48.8125', '1.0', '54.4375'])
 
     def test_create_integer_code(self):
         self.assertEqual(self.langeron.create_integer_code('shell_angles'), '202239')
@@ -45,13 +66,15 @@ class TestLangeron(unittest.TestCase):
 
     def test_get_attr(self):
         self.assertEqual(self.langeron.__getattribute__('shell_angles').split(', '), ['-60.875', '-55.25', '-7.4375'])
-        self.assertEqual(self.langeron.__getattribute__('langeron_angles').split(', '), ['-58.0625', '20.6875', '48.8125', '1.0', '54.4375'])
+        self.assertEqual(self.langeron.__getattribute__('langeron_angles').split(', '),
+                         ['-58.0625', '20.6875', '48.8125', '1.0', '54.4375'])
 
     def test_prepare_to_wb(self):
         self.langeron.prepare_to_wb()
         self.assertEqual(self.langeron.shell_integer_code, '202239')
         self.assertEqual(self.langeron.langeron_integer_code, '2149594261')
-        self.assertEqual(self.langeron.bytestring, '0011010100101000110001110101010001100101110011111000110000011001101010010111')
+        self.assertEqual(self.langeron.bytestring,
+                         '0011010100101000110001110101010001100101110011111000110000011001101010010111')
 
     def test_read_from_bytes(self):
         self.langeron.prepare_to_wb()
@@ -60,6 +83,30 @@ class TestLangeron(unittest.TestCase):
         result = self.langeron.read_from_bites(self.langeron.bytestring)
         for el in result:
             self.assertEqual(self.test_case[el], result[el])
+
+    def test_replace_values_from_bytestring(self):
+        self.langeron.prepare_to_wb()
+        for el in self.test_case:
+            if el != 'model_name' and el != 'creation_time' and el != 'bytestring':
+                self.assertEqual(self.langeron.__getattribute__(el), self.test_case[el])
+
+
+class OptimizationTest(unittest.TestCase):
+    def setUp(self):
+        self.base = BaseModel('current_item')
+        self.langeron_list = []
+        for i in range(population_size):
+            tmp = test_values_for_logic_test()
+            tmp['id'] = i
+            self.langeron_list.append(LangeronModel(tmp.values()))
+        self.optimization_test = GeneticAlgorithm(self.langeron_list)
+
+    def test_optimization(self):
+        for i in range(10):
+            tmp = self.optimization_test.selection()
+            self.optimization_test.crossover(tmp)
+        self.optimization_test.mutation()
+        print(self.optimization_test.children)
 
 
 if __name__ == '__main__':

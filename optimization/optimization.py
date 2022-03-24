@@ -3,7 +3,7 @@
 from math import pow
 import numpy as np
 
-from test_script import logging
+from workbench_script import logging
 
 
 def random_generator(min_value=-89, max_value=90):

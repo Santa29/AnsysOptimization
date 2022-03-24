@@ -16,12 +16,14 @@ class ShellModel:
         'shell_angles',
         'value_vertical',
         'value_horizontal',
-        'value_spectrum_modal',
+        'value_spectrum_modal_min',
+        'value_spectrum_modal_max'
         'antiflatter_value',
         'antiflatter_diam',
         'antiflatter_length',
         'bytestring',
-        'creation_time'
+        'creation_time',
+        'mass'
     ]
 
     def __init__(self, row):
