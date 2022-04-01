@@ -53,8 +53,8 @@ class WBLangeronModel:
         self.twist_tip = 0.0
         self.mass_center = 0.0
         self.cost = 0.0
-        self.langeron_integer_code = 0
-        self.shell_integer_code = 0
+        self.langeron_integer_code = ''
+        self.shell_integer_code = ''
         for i, el in enumerate(row):
             setattr(self, self.initialization_list[i], el)
 

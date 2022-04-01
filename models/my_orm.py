@@ -25,6 +25,16 @@ class BaseModel:
 
         return result
 
+    def select_by_series(self, series):
+        query = 'SELECT * from {} WHERE series = ?'.format(self.table_name)
+        params = (series,)
+        # Execute our query
+        conn = sqlite3.connect('experiment.sqlite')
+        cursor = conn.cursor()
+        result = cursor.execute(query, params)
+
+        return result
+
     def bulk_insert(self, insert_list):
         # Execute our query
         conn = sqlite3.connect('experiment.sqlite')

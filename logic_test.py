@@ -1,14 +1,3 @@
-import os
-import sys
-
-current_path = os.path.dirname(__file__)
-sys.path.append(current_path)
-sys.path.append(os.path.join(current_path, 'models'))
-try:
-    os.chdir(current_path)
-except:
-    pass
-
 import unittest
 from test import test_values_for_logic_test
 from random import randint
@@ -43,7 +32,10 @@ class TestLangeron(unittest.TestCase):
                           'mass': 430,
                           'tip_flap': 40.0,
                           'twist_tip': 15.0,
-                          'mass_center': 110
+                          'mass_center': 110,
+                          'cost': 0.0,
+                          'langeron_integer_code': '',
+                          'shell_integer_code': ''
                           }
         self.langeron = LangeronModel(self.test_case.values())
 
@@ -86,9 +78,21 @@ class TestLangeron(unittest.TestCase):
 
     def test_replace_values_from_bytestring(self):
         self.langeron.prepare_to_wb()
+        list_of_calculated_attributes = [
+            'model_name',
+            'creation_time',
+            'bytestring',
+            'series',
+            'langeron_integer_code',
+            'shell_integer_code'
+        ]
         for el in self.test_case:
-            if el != 'model_name' and el != 'creation_time' and el != 'bytestring':
+            if el not in list_of_calculated_attributes:
                 self.assertEqual(self.langeron.__getattribute__(el), self.test_case[el])
+
+    def test_repr_dict(self):
+        self.langeron.prepare_to_wb()
+        print(self.langeron.get_dict_representation())
 
 
 class OptimizationTest(unittest.TestCase):
@@ -106,7 +110,6 @@ class OptimizationTest(unittest.TestCase):
             tmp = self.optimization_test.selection()
             self.optimization_test.crossover(tmp)
         self.optimization_test.mutation()
-        print(self.optimization_test.children)
 
 
 if __name__ == '__main__':

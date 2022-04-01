@@ -23,7 +23,7 @@ except:
 
 from models import database_creation
 from models.my_orm import BaseModel
-from models.langeron import LangeronModel
+from models.wb_ansys_langeron import WBLangeronModel
 from models.shell import ShellModel
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
@@ -131,10 +131,13 @@ def split_integer_id_to_list(integer_id):
 
 database_creation.create_table('experiment.sqlite')
 
+logging('Start working')
+
 a = BaseModel('langeron')
 current_object_list = []
-for i in range(1, 21):
-    temp = a.select_by_id(i).fetchall()
-    current_object_list.append(LangeronModel(temp))
+for el in a.select_by_series('need_calculate'):
+    current_object_list.append(WBLangeronModel(el))
+
+logging('finish work')
 
 # update_project()

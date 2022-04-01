@@ -99,8 +99,8 @@ class LangeronModel:
         """This function prepare the LangeronModel object to introduce with Ansys WB and optimization script by
         create specific values: shell and langeron integer codes will provide information about shell angles to
         acp-pre, bytestring will introduce with parametric optimization script """
-        self.shell_integer_code = self.create_integer_code('shell_angles')
-        self.langeron_integer_code = self.create_integer_code('langeron_angles')
+        self.shell_integer_code = self.create_integer_code('shell_angles', 'shell_integer_code')
+        self.langeron_integer_code = self.create_integer_code('langeron_angles', 'langeron_integer_code')
         self._convert_to_bites()
 
     def name_autoincrement(self):
@@ -124,9 +124,9 @@ class LangeronModel:
                 list_of_angles.append(el)
         return list_of_angles
 
-    def create_integer_code(self, field):
+    def create_integer_code(self, field, field_name='shell_integer_code'):
         """
-        Takes class field name, returns integer code in string, if there is up to 4 elements in field.
+        Takes class field name, returns integer code in string and set it on field_name attribute.
         This need to set the parameters in acp_pre.
         """
         result = ''
@@ -134,6 +134,7 @@ class LangeronModel:
             for i, el in enumerate(self.angles_range):
                 if float(angle) == el:
                     result += str(i + 10)
+        setattr(self, field_name, result)
         return result
 
     def get_integer_code(self, field):
@@ -221,7 +222,7 @@ class LangeronModel:
 
         for key, value in result_dict.items():
             setattr(self, key, value)
-
+        self.series = 'need_calculate'
         return result_dict
 
     def update_values(self):
@@ -288,3 +289,11 @@ class LangeronModel:
         result += self.cost_penalty()
         self.cost = result
         return result
+
+    def get_dict_representation(self):
+        repr_dict = {}
+        for el in self.initialization_list:
+            if el != 'id':
+                repr_dict[el] = getattr(self, el)
+        return repr_dict
+

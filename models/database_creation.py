@@ -30,8 +30,8 @@ def create_table(db_name):
         twist_tip REAL,
         mass_center REAL,
         cost REAL,
-        langeron_integer_code INTEGER,
-        shell_integer_code INTEGER);
+        langeron_integer_code TEXT,
+        shell_integer_code TEXT);
     '''
 
     cursor.execute(query)
@@ -85,8 +85,8 @@ def create_table(db_name):
             twist_tip REAL,
             mass_center REAL,
             cost REAL,
-            langeron_integer_code INTEGER,
-            shell_integer_code INTEGER);
+            langeron_integer_code TEXT,
+            shell_integer_code TEXT);
         '''
 
     cursor.execute(query)
