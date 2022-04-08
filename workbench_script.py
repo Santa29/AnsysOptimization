@@ -90,20 +90,20 @@ def change_parameter(param_id, value):
         Expression=value)
 
 
+def get_parameter(param_id):
+    parameter = Parameters.GetParameter(Name=param_id)
+    value = str(parameter.Value).split(' ')
+    return value[0]
+
+
 def update_project():
     """This function update the project in Workbench window"""
     try:
-        recreate_geometry('Geom 3',
-                          'Geometry 5',
-                          ('P13', '30'),
-                          'geometry recreation success in vertical',
-                          'geometry recreation fail in vertical')
-
-        recreate_geometry('Geom 2',
-                          'Geometry 4',
-                          ('P19', '30'),
-                          'geometry recreation success in vertical',
-                          'geometry recreation fail in vertical')
+        # recreate_geometry('Geom 3',
+        #                   'Geometry 5',
+        #                   ('P13', '30'),
+        #                   'geometry recreation success in vertical',
+        #                   'geometry recreation fail in vertical')
         run_script('ACP-pre-1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
         run_script('ACP-pre', 'Setup 2', acp_pre_path, 'ACP-pre-vert successful updated', 'ACP-pre failed to update')
         Update()
@@ -138,6 +138,58 @@ current_object_list = []
 for el in a.select_by_series('need_calculate'):
     current_object_list.append(WBLangeronModel(el))
 
-logging('finish work')
+for el in current_object_list:
+    # Change parameters for mechanical
+    change_parameter('P13', str(el.wall_length))
+    change_parameter('P14', str(el.wall_angle))
+    change_parameter('P15', str(el.antiflatter_value))
+    change_parameter('P16', str(el.antiflatter_diam))
+    change_parameter('P17', str(el.polymer_volume_coordinate))
+    change_parameter('P18', str(el.antiflatter_length))
+    change_parameter('P19', str(el.wall_length))
+    change_parameter('P20', str(el.wall_angle))
+    change_parameter('P21', str(el.antiflatter_value))
+    change_parameter('P22', str(el.antiflatter_diam))
+    change_parameter('P23', str(el.polymer_volume_coordinate))
+    change_parameter('P24', str(el.antiflatter_length))
+    # Calculate Number of layers to correct run the acp=pre script
+    number_of_layers = str(int(len(el.shell_integer_code) / 2)) + str(int(len(el.langeron_integer_code) / 2)) * 2
+    # Change parameters to use them in acp-pre script
+    change_parameter('P39', number_of_layers)
+    change_parameter('P41', number_of_layers)
+    change_parameter('P35', el.shell_integer_code)
+    change_parameter('P44', el.shell_integer_code)
+    change_parameter('P66', el.langeron_integer_code[0:8])
+    change_parameter('P67', el.langeron_integer_code[8:])
+    change_parameter('P36', el.langeron_integer_code[0:8])
+    change_parameter('P37', el.langeron_integer_code[8:])
+    change_parameter('P42', el.langeron_integer_code[0:8])
+    change_parameter('P43', el.langeron_integer_code[8:])
+    change_parameter('P45', el.langeron_integer_code[0:8])
+    change_parameter('P46', el.langeron_integer_code[8:])
+    update_project()
+    # Read safety factors
+    el.value_vertical = float(get_parameter('P65'))
+    el.value_horizontal = float(get_parameter('P64'))
+    # Read and build correct modal string
+    tmp = get_parameter('P53') + ', ' + get_parameter('P54') + ', ' + get_parameter('P55') + ', ' + get_parameter('P56')
+    tmp += ', ' + get_parameter('P57') + ', ' + get_parameter('P58')
+    el.value_spectrum_modal_min = tmp
+    tmp = get_parameter('P76') + ', ' + get_parameter('P77') + ', ' + get_parameter('P78') + ', ' + get_parameter('P79')
+    tmp += ', ' + get_parameter('P80') + ', ' + get_parameter('P81')
+    el.value_spectrum_modal_max = tmp
+    # Read wing mass
+    el.mass = round(float(get_parameter('P60')) * 1000)
+    # Calculate and read tip_flap
+    max_deformation_x = max((float(get_parameter('P61')), float(get_parameter('P68'))))
+    max_deformation_y = max((float(get_parameter('P74')), float(get_parameter('P75'))))
+    tmp1 = (max_deformation_x ** 2 + max_deformation_y ** 2) ** 0.5
+    max_deformation_x = max((float(get_parameter('P59')), float(get_parameter('P72'))))
+    max_deformation_y = max((float(get_parameter('P71')), float(get_parameter('P73'))))
+    tmp2 = (max_deformation_x ** 2 + max_deformation_y ** 2) ** 0.5
+    el.tip_flap = max(tmp1, tmp2)
+    # Calculate and read the twist_tip
+    el.twist_tip = max((float(get_parameter('P69')), float(get_parameter('P70'))))
 
-# update_project()
+
+logging('finish work')

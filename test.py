@@ -1,5 +1,6 @@
 """Some minor functions to test the script working"""
 from random import randint, choice
+from models.my_orm import BaseModel
 
 
 def test_values_for_orm(model_type='Shell'):
@@ -12,9 +13,9 @@ def test_values_for_orm(model_type='Shell'):
             'wall_length': randint(15, 30),
             'wall_angle': randint(0, 25),
             'polymer_volume_coordinate': randint(5, 15),
-            'shell_angles': generate_test_angles(3),
-            'langeron_angles': generate_test_angles(6),
-            'langeron_wall_angles': generate_test_angles(6)
+            'shell_angles': generate_test_angles(2),
+            'langeron_angles': generate_test_angles(5),
+            'langeron_wall_angles': generate_test_angles(5)
         }
         return values
 
@@ -97,3 +98,11 @@ def generate_max_modal_values(modes_list):
     for el in modes_list:
         new_list.append(el + randint(10, 40))
     return new_list
+
+
+if __name__ == '__main__':
+    a = BaseModel('langeron')
+    current_object_list = []
+    for i in range(20):
+        current_object_list.append(test_values_for_orm(model_type='Langeron'))
+    a.bulk_insert(current_object_list)
