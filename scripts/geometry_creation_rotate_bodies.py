@@ -68,9 +68,9 @@ result = SketchHelper.StartConstraintSketching()
 # EndBlock
 
 # Sketch Line
-start = Point2D.Create(MM(Parameters.wall_length + SCALE_FACTOR * math.tan(math.degrees(Parameters.wall_angle))),
+start = Point2D.Create(MM(Parameters.wall_length + SCALE_FACTOR * math.tan(Parameters.wall_angle)),
 MM(SCALE_FACTOR))
-end = Point2D.Create(MM(Parameters.wall_length - SCALE_FACTOR * math.tan(math.degrees(Parameters.wall_angle))),
+end = Point2D.Create(MM(Parameters.wall_length - SCALE_FACTOR * math.tan(Parameters.wall_angle)),
 MM(-SCALE_FACTOR))
 result = SketchLine.Create(start, end)
 # EndBlock
@@ -390,9 +390,9 @@ result = Delete.Execute(selection)
 # EndBlock
 
 # Offset Sketch Curve
-curvesToOffset = Selection.Create([GetRootPart().DatumPlanes[0].Curves[2],
+curvesToOffset = Selection.Create([GetRootPart().DatumPlanes[0].Curves[0],
     GetRootPart().DatumPlanes[0].Curves[1],
-    GetRootPart().DatumPlanes[0].Curves[0]])
+    GetRootPart().DatumPlanes[0].Curves[2]])
 offsetDistance = MM(Parameters.antiflatter_diam + 0.5)
 result = SketchOffsetCurve.Create(curvesToOffset, offsetDistance)
 # EndBlock
@@ -419,16 +419,6 @@ curveSelPoint = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[3], 0.
 result = TrimSketchCurve.Execute(curveSelPoint)
 # EndBlock
 
-baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[3].GetChildren[ICurvePoint]()[0])
-targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[2], 0.00629471188316736)
-
-result = Constraint.CreateCoincident(baseSel, targetSel)
-
-baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[3].GetChildren[ICurvePoint]()[1])
-targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[1], 0.00998047054233021)
-
-result = Constraint.CreateCoincident(baseSel, targetSel)
-
 baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[3])
 targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].GetChildren[IDatumLine]()[0])
 
@@ -437,14 +427,14 @@ result = Constraint.CreatePerpendicular(baseSel, targetSel)
 
 # Create coordinates dictionary
 coord_dict = {
-        1:(0, 0),
-        2:(0, 1),
-        3:(0, 2),
-        4:(1, 2),
-        5:(2, 2),
-        6:(3, 2),
-        7:(3, 1),
-        8:(3, 0)
+        0:(0, 0),
+        1:(0, 1),
+        2:(0, 2),
+        3:(1, 2),
+        4:(2, 2),
+        5:(3, 2),
+        6:(3, 1),
+        7:(3, 0)
         }
 # EndBlock
 

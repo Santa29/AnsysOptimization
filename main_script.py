@@ -16,8 +16,9 @@ import os
 dir_path = os.path.dirname(os.path.abspath(__file__))
 log_path = os.path.join(dir_path, 'scripts', 'log.txt')
 db_path = os.path.join(dir_path, 'experiment.sqlite')
-wb_script_path = os.path.join(dir_path, 'workbench_script.py')
-wb_project_path = r'C:\Ansys projects\Lopast_helicopter'
+wb_script_path = r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\workbench_script.py'
+wb_project_path = r'C:\Ansys projects\Lopast_helicopter\Lopast_helicopter.wbpj'
+wb_main_path = r'C:\Program Files\ANSYS Inc\v221\Framework\bin\Win64\runWB2.exe'
 
 table = BaseModel('langeron')
 
@@ -48,7 +49,7 @@ def calculate_values_in_wb(series_counter):
         langeron_list.append(LangeronModel(el))
     for el in langeron_list:
         el.prepare_to_wb()
-    process = subprocess.Popen("%s %s" % (wb_project_path, wb_script_path))
+    process = subprocess.Popen("%s -B -F %s -R %s" % (wb_main_path, wb_project_path, wb_script_path))
     process.wait()
     for el in langeron_list:
         el.get_cost()
@@ -58,7 +59,7 @@ def calculate_values_in_wb(series_counter):
     return langeron_list
 
 
-for i in range(100):
+for i in range(10):
     counter = 0
     temporary_langeron_list = calculate_values_in_wb(counter)
     calculated_langeron_list = make_optimization(temporary_langeron_list)

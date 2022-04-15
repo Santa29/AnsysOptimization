@@ -1,4 +1,26 @@
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Python Script, API Version = V19
 # Python Script, API Version = V19
 ClearAll()
@@ -420,14 +442,14 @@ result = Constraint.CreatePerpendicular(baseSel, targetSel)
 
 # Create coordinates dictionary
 coord_dict = {
-        1:(0, 0),
-        2:(0, 1),
-        3:(0, 2),
-        4:(1, 2),
-        5:(2, 2),
-        6:(3, 2),
-        7:(3, 1),
-        8:(3, 0)
+        0:(0, 0),
+        1:(0, 1),
+        2:(0, 2),
+        3:(1, 2),
+        4:(2, 2),
+        5:(3, 2),
+        6:(3, 1),
+        7:(3, 0)
         }
 # EndBlock
 

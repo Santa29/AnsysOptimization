@@ -104,8 +104,14 @@ def update_project():
         #                   ('P13', '30'),
         #                   'geometry recreation success in vertical',
         #                   'geometry recreation fail in vertical')
-        run_script('ACP-pre-1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
-        run_script('ACP-pre', 'Setup 2', acp_pre_path, 'ACP-pre-vert successful updated', 'ACP-pre failed to update')
+        DSscript = open(r"C:\Ansys projects\Lopast_helicopter\AnsysOptimization\workbench_script.py", "r")
+        DSscriptcommand = DSscript.read()
+        DSscript.close()
+        # Send the command
+        model1.SendCommand(Command=DSscriptcommand)
+        model1.Exit()
+        run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
+        run_script('ACP-Pre', 'Setup 2', acp_pre_path, 'ACP-pre-vert successful updated', 'ACP-pre failed to update')
         Update()
     except:
         logging('Update_failing')
@@ -138,7 +144,9 @@ current_object_list = []
 for el in a.select_by_series('need_calculate'):
     current_object_list.append(WBLangeronModel(el))
 
-for el in current_object_list:
+for i, el in enumerate(current_object_list):
+    if i != 1:
+        continue
     # Change parameters for mechanical
     change_parameter('P13', str(el.wall_length))
     change_parameter('P14', str(el.wall_angle))
@@ -190,6 +198,11 @@ for el in current_object_list:
     el.tip_flap = max(tmp1, tmp2)
     # Calculate and read the twist_tip
     el.twist_tip = max((float(get_parameter('P69')), float(get_parameter('P70'))))
-
+    # Calculate and read the mass_center
+    tmp_x = float(get_parameter('P82'))
+    tmp_y = float(get_parameter('P83'))
+    tmp = ((tmp_x - 25) ** 2 + ((tmp_y - 2) ** 2) ** 0.5)
+    el.mass_center = tmp
+    el.update_values()
 
 logging('finish work')

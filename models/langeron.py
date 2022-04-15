@@ -102,6 +102,7 @@ class LangeronModel:
         self.shell_integer_code = self.create_integer_code('shell_angles', 'shell_integer_code')
         self.langeron_integer_code = self.create_integer_code('langeron_angles', 'langeron_integer_code')
         self._convert_to_bites()
+        self.update_values()
 
     def name_autoincrement(self):
         name = 'Series.' + str(self.series) + ' Angles:' + str(self.shell_angles)
@@ -149,11 +150,20 @@ class LangeronModel:
         Set the bytestring form of the class to interact with genetic algorithm.
         """
         length_dict = {
-            300: 3,
-            400: 4,
-            500: 5,
-            600: 6,
-            700: 7
+            100: 0,
+            200: 1,
+            300: 2,
+            400: 3,
+            500: 4,
+            600: 5,
+            700: 6,
+            800: 7
+        }
+        antiflatter_diam_dict = {
+            2: 0,
+            3: 1,
+            4: 2,
+            5: 3
         }
         self.bytestring += format(int(len(self.shell_integer_code) / 2), '04b')
         self.bytestring += format(int(len(self.langeron_integer_code) / 2), '04b')
@@ -163,7 +173,8 @@ class LangeronModel:
             argument.append(tmp)
         for el in argument:
             self.bytestring += format(el, '06b')
-        self.bytestring += format(getattr(self, 'antiflatter_diam'), '03b')
+        argument = antiflatter_diam_dict[getattr(self, 'antiflatter_diam')]
+        self.bytestring += format(argument, '02b')
         argument = length_dict[getattr(self, 'antiflatter_length')]
         self.bytestring += format(argument, '03b')
         self.bytestring += format(getattr(self, 'antiflatter_value'), '03b')
@@ -183,6 +194,22 @@ class LangeronModel:
         number_of_langeron_layers = int(income_bytestring[4:8], 2)
         # Read the values of shell angles
         temporary_list = []
+        antiflatter_diam_dict = {
+            0: 2,
+            1: 3,
+            2: 4,
+            3: 5
+        }
+        length_dict = {
+            0: 100,
+            1: 200,
+            2: 300,
+            3: 400,
+            4: 500,
+            5: 600,
+            6: 700,
+            7: 800
+        }
         result_dict = {
             'shell_integer_code': '',
             'langeron_integer_code': '',
@@ -199,10 +226,14 @@ class LangeronModel:
         for el in temporary_list:
             result_dict['shell_integer_code'] += str(el)
         # Read antiflatter_diam
-        result_dict['antiflatter_diam'] = int(income_bytestring[temporary_value:temporary_value + 3], 2)
-        temporary_value += 3
+        tmp = int(income_bytestring[temporary_value:temporary_value + 2], 2)
+        tmp = antiflatter_diam_dict[tmp]
+        result_dict['antiflatter_diam'] = tmp
+        temporary_value += 2
         # Read antiflatter_length
-        result_dict['antiflatter_length'] = int(income_bytestring[temporary_value: temporary_value + 3], 2) * 100
+        tmp = int(income_bytestring[temporary_value: temporary_value + 3], 2)
+        tmp = length_dict[tmp]
+        result_dict['antiflatter_length'] = tmp
         temporary_value += 3
         # Read antiflatter value
         result_dict['antiflatter_value'] = int(income_bytestring[temporary_value: temporary_value + 3], 2)
