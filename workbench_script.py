@@ -41,14 +41,21 @@ def logging(message):
     f.close()
 
 
-def update_component(name, container_list):
-    """This function update current component"""
-    system = GetSystem(Name=name)
-    invalid_containers = []
-    for container in container_list:
-        invalid_containers.append(system.GetContainer(ComponentName=container))
-    Parameters.SetRetainedDesignPointDataInvalid(InvalaidContainers=invalid_containers)
-    Update()
+def update_component(system_name, message_success, message_fail):
+    """
+    This function update current component
+    params:
+    system_name: str -> name of updating component from workbench tree
+    message_success: str -> success message to log file
+    message_fail: str -> fail message to log file
+    """
+    system = GetSystem(Name=system_name)
+    container = system.GetComponent(Name="Geometry")
+    try:
+        container.Update(AllDependencies=True)
+        logging(message_success)
+    except:
+        logging(message_fail)
 
 
 def run_script(name, component, script_path, message_success, message_fail):
@@ -61,21 +68,6 @@ def run_script(name, component, script_path, message_success, message_fail):
         geometry1.Edit(IsSpaceClaimGeometry=True)
         setup1.RunScript(ScriptPath=script_path)
         geometry1.Exit()
-    except:
-        logging(message_fail)
-    else:
-        logging(message_success)
-
-
-def recreate_geometry(name, component, parameters_list, message_success, message_fail):
-    """This function run script in the current module with the current name"""
-    try:
-        system = GetSystem(Name=name)
-        geometry = system.GetContainer(ComponentName=component)
-        for element_id, value in parameters_list:
-            change_parameter(element_id, value)
-        geometry.Edit(IsSpaceClaimGeometry=True)
-        geometry.Exit()
     except:
         logging(message_fail)
     else:
@@ -99,24 +91,56 @@ def get_parameter(param_id):
 def update_project():
     """This function update the project in Workbench window"""
     try:
-        # recreate_geometry('Geom 3',
-        #                   'Geometry 5',
-        #                   ('P13', '30'),
-        #                   'geometry recreation success in vertical',
-        #                   'geometry recreation fail in vertical')
-        DSscript = open(r"C:\Ansys projects\Lopast_helicopter\AnsysOptimization\workbench_script.py", "r")
-        DSscriptcommand = DSscript.read()
-        DSscript.close()
-        # Send the command
-        model1.SendCommand(Command=DSscriptcommand)
-        model1.Exit()
+        update_component('Geom 2', 'Update geometry success', 'Update geometry failed')
+        update_mechanical_component(
+            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight.py',
+            'Update mechanical component success',
+            'Update mechanical component failed',
+            'ACP-Pre 1',
+            'Model 1'
+        )
         run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
+        update_component('Geom-3', 'Update geometry success', 'Update geometry failed')
+        update_mechanical_component(
+            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_vertical_flight.py',
+            'Update mechanical component success',
+            'Update mechanical component failed',
+            'ACP-Pre',
+            'Model'
+        )
         run_script('ACP-Pre', 'Setup 2', acp_pre_path, 'ACP-pre-vert successful updated', 'ACP-pre failed to update')
         Update()
     except:
         logging('Update_failing')
     else:
         logging('Update success')
+
+
+def update_mechanical_component(script_path, message_success, message_fail, system_name, model_name):
+    """
+    This function update the model component in workbench script tree with the corresponding python script to avoid
+    errors with material assignment.
+    params:
+    script_path: str -> path to the script in r'' form
+    message_success: str -> success message to log file
+    message_fail: str -> fail message to log file
+    system_name: str -> name of updating system, from workbench project tree
+    model_name: str -> name of updating component, from workbench project tree
+    """
+    system = GetSystem(Name=system_name)
+    container = system.GetContainer(ComponentName=model_name)
+    DSscript = open(script_path, 'r')
+    DSscriptCommand = DSscript.read()
+    DSscript.close()
+    container.Edit(Interactive=False)
+    try:
+        container.SendCommand(Language='Python', Command=DSscriptCommand)
+        logging(message_success)
+    except:
+        logging(message_fail)
+    container.Close()
+    model_component = system.GetComponent(Name='Model')
+    model_component.Update(AllDependencies=True)
 
 
 def split_integer_id_to_list(integer_id):

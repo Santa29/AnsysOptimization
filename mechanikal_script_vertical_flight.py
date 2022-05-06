@@ -1,5 +1,3 @@
-'''NOTE : All workflows will not be recorded, as recording is under development.'''
-
 location_list = {
     'Resin': Model.NamedSelections.Children[3],
     'Epoxy': Model.NamedSelections.Children[2],
@@ -13,6 +11,3 @@ assigment_list = [
     ('Steel', Model.Materials.Children[6]),
     ('PPS', Model.Materials.Children[7])
 ]
-
-for value in assigment_list:
-    value[1].Location = location_list[value[0]]

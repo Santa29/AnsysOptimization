@@ -1,4 +1,7 @@
-# Python Script, API Version = V19
+
+
+
+
 # Python Script, API Version = V19
 ClearAll()
 import math
@@ -201,146 +204,6 @@ selection = BodySelection.Create([GetRootPart().Bodies[7],
     GetRootPart().Bodies[6]])
 result = Delete.Execute(selection)
 # EndBlock
- 
-# Set Sketch Plane
-sectionPlane = Plane.PlaneZX
-result = ViewHelper.SetSketchPlane(sectionPlane)
-# EndBlock
-
-# Set New Sketch
-result = SketchHelper.StartConstraintSketching()
-# EndBlock
-
-# Sketch Line
-start = Point2D.Create(MM(0), MM(-97))
-end = Point2D.Create(MM(0), MM(203))
-result = SketchLine.Create(start, end)
-
-baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[0].GetChildren[ICurvePoint]()[0])
-targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].GetChildren[IDatumLine]()[1])
-
-result = Constraint.CreateCoincident(baseSel, targetSel)
-
-baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[0].GetChildren[ICurvePoint]()[1])
-targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].GetChildren[IDatumLine]()[1])
-
-result = Constraint.CreateCoincident(baseSel, targetSel)
-
-curveSelList = Selection.Create(GetRootPart().DatumPlanes[0].Curves[0])
-result = Constraint.CreateVertical(curveSelList)
-
-baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[0])
-targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].GetChildren[IDatumLine]()[0])
-
-result = Constraint.CreatePerpendicular(baseSel, targetSel)
-# EndBlock
-
-# Sketch Line
-start = Point2D.Create(MM(0), MM(203))
-end = Point2D.Create(MM(1299.03810567665), MM(953.000000000006))
-result = SketchLine.Create(start, end)
-
-baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[1].GetChildren[ICurvePoint]()[0])
-targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].GetChildren[IDatumLine]()[1])
-
-result = Constraint.CreateCoincident(baseSel, targetSel)
-
-baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[1].GetChildren[ICurvePoint]()[0])
-targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[0].GetChildren[ICurvePoint]()[1])
-
-result = Constraint.CreateCoincident(baseSel, targetSel)
-# EndBlock
-
-# Sketch Line
-start = Point2D.Create(MM(0), MM(-97))
-end = Point2D.Create(MM(1299.03810567666), MM(-846.999999999997))
-result = SketchLine.Create(start, end)
-
-baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[2].GetChildren[ICurvePoint]()[0])
-targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].GetChildren[IDatumLine]()[1])
-
-result = Constraint.CreateCoincident(baseSel, targetSel)
-
-baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[2].GetChildren[ICurvePoint]()[0])
-targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[0].GetChildren[ICurvePoint]()[0])
-
-result = Constraint.CreateCoincident(baseSel, targetSel)
-# EndBlock
-
-# Create Three Point Arc
-point1 = Point2D.Create(MM(1299.03810567665), MM(953.000000000006))
-point2 = Point2D.Create(MM(1299.03810567666), MM(-846.999999999997))
-point3 = Point2D.Create(MM(1540.08973132457), MM(72.2229188163787))
-result = SketchArc.Create3PointArc(point1, point2, point3)
-
-baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[3].GetChildren[ICurvePoint]()[1])
-targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[2].GetChildren[ICurvePoint]()[1])
-
-result = Constraint.CreateCoincident(baseSel, targetSel)
-# EndBlock
-
-# Solidify Sketch
-mode = InteractionMode.Solid
-result = ViewHelper.SetViewMode(mode, None)
-# EndBlock
-
-# Thicken 1 Face
-selection = FaceSelection.Create(GetRootPart().Bodies[3].Faces[0])
-options = ThickenFaceOptions()
-options.PullSymmetric = True
-options.ExtrudeType = ExtrudeType.ForceIndependent
-result = ThickenFaces.Execute(selection, Direction.DirY, MM(150), options)
-# EndBlock
-
-# Intersect Bodies
-targets = BodySelection.Create(GetRootPart().Bodies[3])
-tools = BodySelection.Create(GetRootPart().Bodies[1])
-options = MakeSolidsOptions()
-result = Combine.Intersect(targets, tools, options)
-# EndBlock
-
-# Delete Objects
-selection = BodySelection.Create(GetRootPart().Bodies[4])
-result = Combine.RemoveRegions(selection)
-# EndBlock
-
-# Intersect Bodies
-targets = BodySelection.Create(GetRootPart().Bodies[3])
-tools = BodySelection.Create(GetRootPart().Bodies[2])
-options = MakeSolidsOptions()
-result = Combine.Intersect(targets, tools, options)
-# EndBlock
-
-# Delete Objects
-selection = BodySelection.Create(GetRootPart().Bodies[4])
-result = Combine.RemoveRegions(selection)
-# EndBlock
-
-# Intersect Bodies
-targets = BodySelection.Create(GetRootPart().Bodies[3])
-tools = BodySelection.Create(GetRootPart().Bodies[0])
-options = MakeSolidsOptions()
-result = Combine.Intersect(targets, tools, options)
-# EndBlock
-
-# Delete Objects
-selection = BodySelection.Create(GetRootPart().Bodies[4])
-result = Combine.RemoveRegions(selection)
-# EndBlock
-
-# 
-result = Copy.ToClipboard(FaceSelection.Create([GetRootPart().Bodies[0].Faces[3],
-    GetRootPart().Bodies[2].Faces[5],
-    GetRootPart().Bodies[2].Faces[4],
-    GetRootPart().Bodies[0].Faces[4],
-    GetRootPart().Bodies[2].Faces[3],
-    GetRootPart().Bodies[0].Faces[1],
-    GetRootPart().Bodies[2].Faces[1]]))
-# EndBlock
-
-# Paste from Clipboard
-result = Paste.FromClipboard()
-# EndBlock
 
 # 
 result = Copy.ToClipboard(FaceSelection.Create([GetRootPart().Bodies[1].Faces[4],
@@ -348,88 +211,103 @@ result = Copy.ToClipboard(FaceSelection.Create([GetRootPart().Bodies[1].Faces[4]
     GetRootPart().Bodies[1].Faces[1]]))
 # EndBlock
 
-# Paste from Clipboard
-result = Paste.FromClipboard()
-# EndBlock
-
 # Set Sketch Plane
-sectionPlane = Plane.PlaneXY
-result = ViewHelper.SetSketchPlane(sectionPlane, None)
+selection = Plane.PlaneXY
+result = ViewHelper.SetSketchPlane(selection)
 # EndBlock
 
 # Set New Sketch
 result = SketchHelper.StartConstraintSketching()
 # EndBlock
 
-# Project to Sketch
-selection = BodySelection.Create(GetRootPart().Bodies[0])
-plane = Plane.PlaneXY
-result = ProjectToSketch.Create(selection, plane)
+# Calculate the new spline, all points is perpendicular to the parent lines
+points = List[Point2D]()
+top_line_modifyed = []
+top_line_new_points = []
+# Get the modify massive of points which contains only points with y <= polymer volume coordinate
+for el in top_line:
+    if el[0] <= Parameters.polymer_volume_coordinate:
+        top_line_modifyed.append(el)
+# Start searching the new massive points
+for i in range(1, len(top_line_modifyed) - 1):
+    x_1 = top_line_modifyed[i][0]
+    x_2 = top_line_modifyed[i+1][0]
+    y_1 = top_line_modifyed[i][1]
+    y_2 =  top_line_modifyed[i+1][1]
+    x_center = (x_1 + x_2) / 2
+    y_center = (y_1 +y_2) / 2
+    b = (y_2 * x_1 - y_1 * x_2) / (x_1 - x_2)
+    a = (y_1 - b) / x_1
+    delta_l = Parameters.antiflatter_diam + 0.5
+    delta_x = (delta_l ** 2 / (a ** 2 + 1)) ** 0.5
+    print(delta_x, delta_l)
+    delta_y = (delta_l ** 2 - delta_x ** 2) ** 0.5
+    x_4 = x_center + delta_y
+    y_4 = y_center - delta_x
+    top_line_new_points.append([x_4, y_4])
+# Get garantee distance
+counter_top = len(top_line_new_points) - 1
+if top_line_new_points[counter_top][0] > Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 0.5:
+    top_line_new_points[counter_top][0] = Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 0.5
+# Draw the new line
+for el in top_line_new_points:
+    points.Add(Point2D.Create(MM(el[0]), MM(el[1])))
+result = SketchNurbs.CreateFrom2DPoints(False, points)
 # EndBlock
 
-# Delete Selection
-selection = Selection.Create([GetRootPart().DatumPlanes[0].Curves[7],
-    GetRootPart().DatumPlanes[0].Curves[8],
-    GetRootPart().DatumPlanes[0].Curves[4],
-    GetRootPart().DatumPlanes[0].Curves[2],
-    GetRootPart().DatumPlanes[0].Curves[1],
-    GetRootPart().DatumPlanes[0].Curves[3],
-    GetRootPart().DatumPlanes[0].Curves[9]])
-result = Delete.Execute(selection)
-# EndBlock
-
-# Offset Sketch Curve
-curvesToOffset = Selection.Create([GetRootPart().DatumPlanes[0].Curves[2],
-    GetRootPart().DatumPlanes[0].Curves[1],
-    GetRootPart().DatumPlanes[0].Curves[0]])
-offsetDistance = MM(Parameters.antiflatter_diam + 0.2)
-result = SketchOffsetCurve.Create(curvesToOffset, offsetDistance)
-# EndBlock
-
-# Delete Selection
-selection = Selection.Create([GetRootPart().DatumPlanes[0].Curves[2],
-    GetRootPart().DatumPlanes[0].Curves[0],
-    GetRootPart().DatumPlanes[0].Curves[1]])
-result = Delete.Execute(selection)
+# Calculate the new spline, all points is perpendicular to the parent lines
+points = List[Point2D]()
+bottom_line_modifyed = []
+bottom_line_new_points = []
+# Get the modify massive of points which contains only points with y <= polymer volume coordinate
+for el in bottom_line:
+    if el[0] <= Parameters.polymer_volume_coordinate:
+        bottom_line_modifyed.append(el)
+# Start searching the new massive points
+for i in range(1, len(bottom_line_modifyed) - 1):
+    x_1 = bottom_line_modifyed[i][0]
+    x_2 = bottom_line_modifyed[i+1][0]
+    y_1 = bottom_line_modifyed[i][1]
+    y_2 =  bottom_line_modifyed[i+1][1]
+    x_center = (x_1 + x_2) / 2
+    y_center = (y_1 +y_2) / 2
+    b = (y_2 * x_1 - y_1 * x_2) / (x_1 - x_2)
+    a = (y_1 - b) / x_1
+    delta_l = Parameters.antiflatter_diam + 0.5
+    delta_x = (delta_l ** 2 / (a ** 2 + 1)) ** 0.5
+    print(delta_x, delta_l)
+    delta_y = (delta_l ** 2 - delta_x ** 2) ** 0.5
+    x_4 = x_center + delta_y
+    y_4 = y_center + delta_x
+    bottom_line_new_points.append([x_4, y_4])
+# Set the first point as sterting point of top_line massive
+bottom_line_new_points[0] = top_line_new_points[0]
+# Get garantee distance
+counter_bottom = len(bottom_line_new_points) - 1
+if bottom_line_new_points[counter_bottom][0] > Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 0.5:
+    bottom_line_new_points[counter_bottom][0] = Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 0.5
+# Draw the new line
+for el in bottom_line_new_points:
+    points.Add(Point2D.Create(MM(el[0]), MM(el[1])))
+result = SketchNurbs.CreateFrom2DPoints(False, points)
 # EndBlock
 
 # Sketch Line
-start = Point2D.Create(MM(9), MM(4.45730746748937))
-end = Point2D.Create(MM(9), MM(-1.52255726825586))
+start = Point2D.Create(MM(bottom_line_new_points[counter_bottom][0]), MM(bottom_line_new_points[counter_bottom][1]))
+end = Point2D.Create(MM(top_line_new_points[counter_top][0]), MM(top_line_new_points[counter_top][1]))
 result = SketchLine.Create(start, end)
-
-baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[3].GetChildren[ICurvePoint]()[0])
-targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[2], 0.00629471188316736)
-
-result = Constraint.CreateCoincident(baseSel, targetSel)
-
-baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[3].GetChildren[ICurvePoint]()[1])
-targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[1], 0.00998047054233021)
-
-result = Constraint.CreateCoincident(baseSel, targetSel)
-
-baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[3])
-targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].GetChildren[IDatumLine]()[0])
-
-result = Constraint.CreatePerpendicular(baseSel, targetSel)
-# EndBlock
 
 # Create coordinates dictionary
 coord_dict = {
-        0:(0, 0),
-        1:(0, 1),
-        2:(0, 2),
-        3:(1, 2),
-        4:(2, 2),
-        5:(3, 2),
-        6:(3, 1),
-        7:(3, 0)
+        0:(2, 0),
+        1:(2, 1),
+        2:(2, 2),
+        3:(0, 0),
+        4:(1, counter_bottom),
+        5:(0, counter_top),
+        6:(0, 2),
+        7:(1, 2)
         }
-# EndBlock
-
-# Sketch Circle
-origin = Point2D.Create(MM(Parameters.polymer_volume_coordinate / 2), MM(0))
-result = SketchCircle.Create(origin, MM(Parameters.antiflatter_diam))
 # EndBlock
 
 # Move the antiflatter to right position
@@ -437,17 +315,16 @@ if Parameters.value_to_calculate_antiflatter_center in coord_dict:
     constraint_1 = coord_dict[Parameters.value_to_calculate_antiflatter_center][0]
     constraint_2 = coord_dict[Parameters.value_to_calculate_antiflatter_center][1]
     
-    # Coincident Constraint
-    baseSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[4].GetChildren[ICurvePoint]()[0])
-    targetSel = SelectionPoint.Create(GetRootPart().DatumPlanes[0].Curves[constraint_1].GetChildren[ICurvePoint]()[constraint_2])
-    result = Constraint.CreateCoincident(baseSel, targetSel)
-    # EndBlock
+# Sketch Circle
+position = GetRootPart().DatumPlanes[0].Curves[constraint_1].GetChildren[ICurvePoint]()[constraint_2]
+position_x, position_y, position_z = position.Position
+origin = Point2D.Create(MM(position_x * 1000), MM(position_y * 1000))
+result = SketchCircle.Create(origin, MM(Parameters.antiflatter_diam))
 # EndBlock
 
 # Delete Selection
 selection = Selection.Create([GetRootPart().DatumPlanes[0].Curves[1],
     GetRootPart().DatumPlanes[0].Curves[2],
-    GetRootPart().DatumPlanes[0].Curves[3],
     GetRootPart().DatumPlanes[0].Curves[0]])
 result = Delete.Execute(selection)
 # EndBlock
@@ -459,7 +336,7 @@ result = ViewHelper.SetViewMode(mode)
 
 # Sweep 1 Face
 selection = FaceSelection.Create(GetRootPart().Bodies[0].Faces[4])
-trajectories = EdgeSelection.Create(GetRootPart().Bodies[4].Edges[7])
+trajectories = EdgeSelection.Create(GetRootPart().Bodies[0].Edges[6])
 options = SweepCommandOptions()
 options.ExtrudeType = ExtrudeType.ForceIndependent
 options.Select = True
@@ -479,13 +356,13 @@ result = Move.Translate(selection, direction, MM(-(1100 - Parameters.antiflatter
 # EndBlock
 
 # Slice Bodies by Plane
-selection = BodySelection.Create(GetRootPart().Bodies[7])
+selection = BodySelection.Create(GetRootPart().Bodies[3])
 datum = Selection.Create(GetRootPart().DatumPlanes[0])
 result = SplitBody.ByCutter(selection, datum)
 # EndBlock
 
 # Delete Objects
-selection = BodySelection.Create(GetRootPart().Bodies[8])
+selection = BodySelection.Create(GetRootPart().Bodies[4])
 result = Combine.RemoveRegions(selection)
 # EndBlock
 
@@ -496,13 +373,13 @@ result = Delete.Execute(selection)
 
 # Intersect Bodies
 targets = BodySelection.Create(GetRootPart().Bodies[0])
-tools = BodySelection.Create(GetRootPart().Bodies[7])
+tools = BodySelection.Create(GetRootPart().Bodies[3])
 options = MakeSolidsOptions()
 result = Combine.Intersect(targets, tools, options)
 # EndBlock
 
 # Delete Objects
-selection = BodySelection.Create(GetRootPart().Bodies[8])
+selection = BodySelection.Create(GetRootPart().Bodies[4])
 result = Combine.RemoveRegions(selection)
 # EndBlock
 
@@ -515,28 +392,34 @@ selection = EdgeSelection.Create(GetRootPart().Bodies[0].Edges[8])
 result = Delete.Execute(selection)
 # EndBlock
 
+# Copy to Clipboard
+result = Copy.ToClipboard(FaceSelection.Create([GetRootPart().Bodies[1].Faces[4],
+    GetRootPart().Bodies[2].Faces[5],
+    GetRootPart().Bodies[0].Faces[1],
+    GetRootPart().Bodies[0].Faces[2],
+    GetRootPart().Bodies[2].Faces[3],
+    GetRootPart().Bodies[1].Faces[3],
+    GetRootPart().Bodies[1].Faces[1],
+    GetRootPart().Bodies[2].Faces[1],
+    GetRootPart().Bodies[0].Faces[7]]))
+# EndBlock
+
+# Paste from Clipboard
+result = Paste.FromClipboard()
+# EndBlock
+
+# Copy-Paste langeron_wall
+result = Copy.ToClipboard(FaceSelection.Create(GetRootPart().Bodies[0].Faces[0]))
+result = Paste.FromClipboard()
+
 # Create Named Selection Group
-primarySelection = FaceSelection.Create([GetRootPart().Bodies[0].Faces[2],
-    GetRootPart().Bodies[2].Faces[0],
-    GetRootPart().Bodies[1].Faces[0]])
+primarySelection = BodySelection.Create(GetRootPart().Bodies[7])
 secondarySelection = Selection.Empty()
 result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Группа1", "Fixed support")
-# EndBlock
-
-# Create Named Selection Group
-primarySelection = BodySelection.Create([GetRootPart().Bodies[4],
-    GetRootPart().Bodies[5],
-    GetRootPart().Bodies[6]])
-secondarySelection = Selection.Empty()
-result = NamedSelection.Create(primarySelection, secondarySelection)
-# EndBlock
-
-# Rename Named Selection
-result = NamedSelection.Rename("Группа1", "Composite")
+result = NamedSelection.Rename("Группа1", "Langeron_wall")
 # EndBlock
 
 # Create Named Selection Group
@@ -550,8 +433,8 @@ result = NamedSelection.Rename("Группа1", "Epoxy")
 # EndBlock
 
 # Create Named Selection Group
-primarySelection = BodySelection.Create([GetRootPart().Bodies[1],
-    GetRootPart().Bodies[2]])
+primarySelection = BodySelection.Create(GetRootPart().Bodies[1],
+GetRootPart().Bodies[2])
 secondarySelection = Selection.Empty()
 result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
@@ -561,7 +444,35 @@ result = NamedSelection.Rename("Группа1", "Fullfillment")
 # EndBlock
 
 # Create Named Selection Group
-primarySelection = BodySelection.Create(GetRootPart().Bodies[7])
+primarySelection = FaceSelection.Create([GetRootPart().Bodies[1].Faces[3],
+    GetRootPart().Bodies[2].Faces[3],
+    GetRootPart().Bodies[0].Faces[2],
+    GetRootPart().Bodies[0].Faces[1],
+    GetRootPart().Bodies[2].Faces[5],
+    GetRootPart().Bodies[1].Faces[4]])
+secondarySelection = Selection.Empty()
+result = NamedSelection.Create(primarySelection, secondarySelection)
+# EndBlock
+
+# Rename Named Selection
+result = NamedSelection.Rename("Группа1", "Pressure")
+# EndBlock
+
+# Create Named Selection Group
+primarySelection = FaceSelection.Create([GetRootPart().Bodies[0].Faces[4],
+    GetRootPart().Bodies[0].Faces[3],
+    GetRootPart().Bodies[2].Faces[0],
+    GetRootPart().Bodies[1].Faces[0]])
+secondarySelection = Selection.Empty()
+result = NamedSelection.Create(primarySelection, secondarySelection)
+# EndBlock
+
+# Rename Named Selection
+result = NamedSelection.Rename("Группа1", "Fixed Support")
+# EndBlock
+
+# Create Named Selection Group
+primarySelection = BodySelection.Create(GetRootPart().Bodies[3])
 secondarySelection = Selection.Empty()
 result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
@@ -570,36 +481,21 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 result = NamedSelection.Rename("Группа1", "Antiflatter")
 # EndBlock
 
-# Delete Selection
-selection = BodySelection.Create(GetRootPart().Bodies[3])
-result = Delete.Execute(selection)
-# EndBlock
-
-# 
-result = Midsurface.Convert(BodySelection.Create([GetRootPart().Bodies[3],
-    GetRootPart().Bodies[4],
-    GetRootPart().Bodies[5]]), MM(1))
-# EndBlock
-
 # Create Named Selection Group
-primarySelection = FaceSelection.Create([GetRootPart().Bodies[3].Faces[2],
-    GetRootPart().Bodies[4].Faces[3],
-    GetRootPart().Bodies[3].Faces[1],
-    GetRootPart().Bodies[4].Faces[1],
-    GetRootPart().Bodies[4].Faces[2],
-    GetRootPart().Bodies[3].Faces[0],
-    GetRootPart().Bodies[2].Faces[0],
-    GetRootPart().Bodies[0].Faces[2]])
+primarySelection = BodySelection.Create(GetRootPart().Bodies[4],
+GetRootPart().Bodies[5],
+GetRootPart().Bodies[6],
+GetRootPart().Bodies[7])
 secondarySelection = Selection.Empty()
 result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Группа1", "Langeron")
+result = NamedSelection.Rename("Группа1", "Composite")
 # EndBlock
 
 # Create Named Selection Group
-primarySelection = BodySelection.Create(GetRootPart().Bodies[5])
+primarySelection = BodySelection.Create(GetRootPart().Bodies[6])
 secondarySelection = Selection.Empty()
 result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
@@ -609,26 +505,12 @@ result = NamedSelection.Rename("Группа1", "Shell")
 # EndBlock
 
 # Create Named Selection Group
-primarySelection = FaceSelection.Create(GetRootPart().Bodies[4].Faces[0])
+primarySelection = BodySelection.Create(GetRootPart().Bodies[4],
+GetRootPart().Bodies[5])
 secondarySelection = Selection.Empty()
 result = NamedSelection.Create(primarySelection, secondarySelection)
 # EndBlock
 
 # Rename Named Selection
-result = NamedSelection.Rename("Группа1", "Langeron_wall")
-# EndBlock
-
-# Create Named Selection Group
-primarySelection = FaceSelection.Create([GetRootPart().Bodies[5].Faces[2],
-    GetRootPart().Bodies[4].Faces[3],
-    GetRootPart().Bodies[3].Faces[2],
-    GetRootPart().Bodies[3].Faces[1],
-    GetRootPart().Bodies[4].Faces[1],
-    GetRootPart().Bodies[5].Faces[0]])
-secondarySelection = Selection.Empty()
-result = NamedSelection.Create(primarySelection, secondarySelection)
-# EndBlock
-
-# Rename Named Selection
-result = NamedSelection.Rename("Группа1", "Pressure")
+result = NamedSelection.Rename("Группа1", "Langeron")
 # EndBlock

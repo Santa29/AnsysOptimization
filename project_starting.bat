@@ -1,0 +1,1 @@
+C:"Program Files""ANSYS Inc"\V221\Framework\bin\win64\runwb2 -B -F "C:\Ansys projects\Lopast_helicopter\Lopast_helicopter.wbpj" -R "C:\Ansys projects\Lopast_helicopter\AnsysOptimization\workbench_script.py"
