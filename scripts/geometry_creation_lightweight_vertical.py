@@ -1,10 +1,5 @@
 
 
-
-
-
-
-
 # Python Script, API Version = V19
 ClearAll()
 import math
@@ -338,16 +333,6 @@ result = Delete.Execute(selection)
 # Solidify Sketch
 mode = InteractionMode.Solid
 result = ViewHelper.SetViewMode(mode)
-# EndBlock
-
-# Rotate About Z Handle
-selection = BodySelection.Create([GetRootPart().Bodies[0],
-    GetRootPart().Bodies[1],
-    GetRootPart().Bodies[2]])
-anchorPoint = Point.Create(MM(60), MM(0), MM(0))
-axis = Line.Create(anchorPoint, Direction.DirZ)
-options = MoveOptions()
-result = Move.Rotate(selection, axis, DEG(10), options)
 # EndBlock
 
 # Sweep 1 Face

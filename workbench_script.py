@@ -41,7 +41,7 @@ def logging(message):
     f.close()
 
 
-def update_component(system_name, message_success, message_fail):
+def update_component(system_name, container_name, message_success, message_fail):
     """
     This function update current component
     params:
@@ -50,7 +50,7 @@ def update_component(system_name, message_success, message_fail):
     message_fail: str -> fail message to log file
     """
     system = GetSystem(Name=system_name)
-    container = system.GetComponent(Name="Geometry")
+    container = system.GetComponent(Name=container_name)
     try:
         container.Update(AllDependencies=True)
         logging(message_success)
@@ -63,11 +63,7 @@ def run_script(name, component, script_path, message_success, message_fail):
     try:
         system1 = GetSystem(Name=name)
         setup1 = system1.GetContainer(ComponentName=component)
-        system1 = GetSystem(Name="Geom 3")
-        geometry1 = system1.GetContainer(ComponentName="Geometry")
-        geometry1.Edit(IsSpaceClaimGeometry=True)
         setup1.RunScript(ScriptPath=script_path)
-        geometry1.Exit()
     except:
         logging(message_fail)
     else:
@@ -83,6 +79,11 @@ def change_parameter(param_id, value):
 
 
 def get_parameter(param_id):
+    """
+    Get the numerical value of current parameter
+    params: param_id: str -> string with name of current parameter
+    output: float -> float value of current parameter
+    """
     parameter = Parameters.GetParameter(Name=param_id)
     value = str(parameter.Value).split(' ')
     return value[0]
@@ -91,7 +92,8 @@ def get_parameter(param_id):
 def update_project():
     """This function update the project in Workbench window"""
     try:
-        update_component('Geom 2', 'Update geometry success', 'Update geometry failed')
+        update_component('Geom 2', 'Geometry', 'Update geometry success', 'Update geometry failed')
+        update_component('Geom 3', 'Geometry', 'Update geometry success', 'Update geometry failed')
         update_mechanical_component(
             r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight.py',
             'Update mechanical component success',
@@ -99,10 +101,16 @@ def update_project():
             'ACP-Pre 1',
             'Model 1'
         )
-        run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
-        update_component('Geom-3', 'Update geometry success', 'Update geometry failed')
         update_mechanical_component(
-            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_vertical_flight.py',
+            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight.py',
+            'Update mechanical component success',
+            'Update mechanical component failed',
+            'ACP-Pre',
+            'Model'
+        )
+        run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
+        update_mechanical_component(
+            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight.py',
             'Update mechanical component success',
             'Update mechanical component failed',
             'ACP-Pre',
