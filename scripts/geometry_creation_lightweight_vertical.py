@@ -1,9 +1,3 @@
-
-
-
-
-
-
 # Python Script, API Version = V19
 ClearAll()
 import math
@@ -398,30 +392,28 @@ result = Delete.Execute(selection)
 # EndBlock
 
 # Copy to Clipboard
-face_list_with_minor_bug = [GetRootPart().Bodies[1].Faces[4],
-GetRootPart().Bodies[2].Faces[5],
-GetRootPart().Bodies[0].Faces[1],
-GetRootPart().Bodies[0].Faces[2],
-GetRootPart().Bodies[2].Faces[3],
-GetRootPart().Bodies[1].Faces[3],
-GetRootPart().Bodies[0].Faces[8],
-GetRootPart().Bodies[1].Faces[1],
-GetRootPart().Bodies[2].Faces[1],
-GetRootPart().Bodies[2].Faces[4]]
-face_list_without_minor_bug = [GetRootPart().Bodies[1].Faces[4],
-GetRootPart().Bodies[2].Faces[5],
-GetRootPart().Bodies[0].Faces[1],
-GetRootPart().Bodies[0].Faces[2],
-GetRootPart().Bodies[2].Faces[3],
-GetRootPart().Bodies[1].Faces[3],
-GetRootPart().Bodies[0].Faces[7],
-GetRootPart().Bodies[1].Faces[1],
-GetRootPart().Bodies[2].Faces[1],
-GetRootPart().Bodies[2].Faces[4]]
 if len(GetRootPart().Bodies[0].Faces) == 9:
-    result = Copy.ToClipboard(FaceSelection.Create(face_list_with_minor_bug))
+    result = Copy.ToClipboard(FaceSelection.Create([GetRootPart().Bodies[1].Faces[4],
+    GetRootPart().Bodies[2].Faces[5],
+    GetRootPart().Bodies[0].Faces[1],
+    GetRootPart().Bodies[0].Faces[2],
+    GetRootPart().Bodies[2].Faces[3],
+    GetRootPart().Bodies[1].Faces[3],
+    GetRootPart().Bodies[0].Faces[8],
+    GetRootPart().Bodies[1].Faces[1],
+    GetRootPart().Bodies[2].Faces[1],
+    GetRootPart().Bodies[2].Faces[4]]))
 else:
-    result = Copy.ToClipboard(FaceSelection.Create(face_list_without_minor_bug))
+    result = Copy.ToClipboard(FaceSelection.Create([GetRootPart().Bodies[1].Faces[4],
+    GetRootPart().Bodies[2].Faces[5],
+    GetRootPart().Bodies[0].Faces[1],
+    GetRootPart().Bodies[0].Faces[2],
+    GetRootPart().Bodies[2].Faces[3],
+    GetRootPart().Bodies[1].Faces[3],
+    GetRootPart().Bodies[0].Faces[7],
+    GetRootPart().Bodies[1].Faces[1],
+    GetRootPart().Bodies[2].Faces[1],
+    GetRootPart().Bodies[2].Faces[4]]))
 # EndBlock
 
 # Paste from Clipboard

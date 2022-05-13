@@ -9,3 +9,7 @@ bodies_id_list = bodies_selection_list.Entities
 
 for body in bodies_id_list:
     body.Thickness = 2
+
+# Generate mesh
+mesh = Model.Mesh
+mesh.GenerateMesh()
