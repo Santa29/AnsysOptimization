@@ -1,5 +1,9 @@
 
 
+
+
+
+
 # Python Script, API Version = V19
 ClearAll()
 import math
@@ -236,7 +240,7 @@ for i in range(1, len(top_line_modifyed) - 1):
     y_center = (y_1 +y_2) / 2
     b = (y_2 * x_1 - y_1 * x_2) / (x_1 - x_2)
     a = (y_1 - b) / x_1
-    delta_l = Parameters.antiflatter_diam + 0.5
+    delta_l = Parameters.antiflatter_diam + 1.0
     delta_x = (delta_l ** 2 / (a ** 2 + 1)) ** 0.5
     print(delta_x, delta_l)
     delta_y = (delta_l ** 2 - delta_x ** 2) ** 0.5
@@ -245,8 +249,8 @@ for i in range(1, len(top_line_modifyed) - 1):
     top_line_new_points.append([x_4, y_4])
 # Get garantee distance
 counter_top = len(top_line_new_points) - 1
-if top_line_new_points[counter_top][0] > Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 0.5:
-    top_line_new_points[counter_top][0] = Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 0.5
+if top_line_new_points[counter_top][0] > Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 1:
+    top_line_new_points[counter_top][0] = Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 1
 # Draw the new line
 for el in top_line_new_points:
     points.Add(Point2D.Create(MM(el[0]), MM(el[1])))
@@ -271,7 +275,7 @@ for i in range(1, len(bottom_line_modifyed) - 1):
     y_center = (y_1 +y_2) / 2
     b = (y_2 * x_1 - y_1 * x_2) / (x_1 - x_2)
     a = (y_1 - b) / x_1
-    delta_l = Parameters.antiflatter_diam + 0.5
+    delta_l = Parameters.antiflatter_diam + 1.0
     delta_x = (delta_l ** 2 / (a ** 2 + 1)) ** 0.5
     print(delta_x, delta_l)
     delta_y = (delta_l ** 2 - delta_x ** 2) ** 0.5
@@ -282,8 +286,8 @@ for i in range(1, len(bottom_line_modifyed) - 1):
 bottom_line_new_points[0] = top_line_new_points[0]
 # Get garantee distance
 counter_bottom = len(bottom_line_new_points) - 1
-if bottom_line_new_points[counter_bottom][0] > Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 0.5:
-    bottom_line_new_points[counter_bottom][0] = Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 0.5
+if bottom_line_new_points[counter_bottom][0] > Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 1:
+    bottom_line_new_points[counter_bottom][0] = Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 1
 # Draw the new line
 for el in bottom_line_new_points:
     points.Add(Point2D.Create(MM(el[0]), MM(el[1])))
@@ -524,11 +528,4 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 
 # Rename Named Selection
 result = NamedSelection.Rename("Группа1", "Langeron")
-# EndBlock
-
-# 
-result = Midsurface.Convert(BodySelection.Create([GetRootPart().Bodies[4],
-    GetRootPart().Bodies[5],
-    GetRootPart().Bodies[6],
-    GetRootPart().Bodies[7]]), MM(2))
 # EndBlock

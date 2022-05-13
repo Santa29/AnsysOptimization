@@ -52,7 +52,7 @@ def update_component(system_name, container_name, message_success, message_fail)
     system = GetSystem(Name=system_name)
     container = system.GetComponent(Name=container_name)
     try:
-        container.Update(AllDependencies=True)
+        container.Refresh()
         logging(message_success)
     except:
         logging(message_fail)
@@ -64,6 +64,7 @@ def run_script(name, component, script_path, message_success, message_fail):
         system1 = GetSystem(Name=name)
         setup1 = system1.GetContainer(ComponentName=component)
         setup1.RunScript(ScriptPath=script_path)
+        setup1.Update(AllDependencies=True)
     except:
         logging(message_fail)
     else:
@@ -109,13 +110,6 @@ def update_project():
             'Model'
         )
         run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
-        update_mechanical_component(
-            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight.py',
-            'Update mechanical component success',
-            'Update mechanical component failed',
-            'ACP-Pre',
-            'Model'
-        )
         run_script('ACP-Pre', 'Setup 2', acp_pre_path, 'ACP-pre-vert successful updated', 'ACP-pre failed to update')
         Update()
     except:
@@ -137,6 +131,7 @@ def update_mechanical_component(script_path, message_success, message_fail, syst
     """
     system = GetSystem(Name=system_name)
     container = system.GetContainer(ComponentName=model_name)
+    container.Refresh()
     DSscript = open(script_path, 'r')
     DSscriptCommand = DSscript.read()
     DSscript.close()
@@ -147,7 +142,7 @@ def update_mechanical_component(script_path, message_success, message_fail, syst
     except:
         logging(message_fail)
     container.Close()
-    model_component = system.GetComponent(Name='Model')
+    model_component = system.GetComponent(Name=model_name)
     model_component.Update(AllDependencies=True)
 
 
