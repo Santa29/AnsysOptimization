@@ -52,7 +52,7 @@ def update_component(system_name, container_name, message_success, message_fail)
     system = GetSystem(Name=system_name)
     container = system.GetComponent(Name=container_name)
     try:
-        container.Refresh()
+        container.Update(AllDependencies=True)
         logging(message_success)
     except:
         logging(message_fail)
@@ -111,6 +111,13 @@ def update_project():
         )
         run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
         run_script('ACP-Pre', 'Setup 2', acp_pre_path, 'ACP-pre-vert successful updated', 'ACP-pre failed to update')
+        update_mechanical_component(
+            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight_total.py',
+            'Update total mechanical component success',
+            'Update total mechanical component failed',
+            'SYS',
+            'Model 2'
+        )
         Update()
     except:
         logging('Update_failing')
