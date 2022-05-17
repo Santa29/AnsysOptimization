@@ -96,7 +96,7 @@ def update_project():
         update_component('Geom 2', 'Geometry', 'Update geometry success', 'Update geometry failed')
         update_component('Geom 3', 'Geometry', 'Update geometry success', 'Update geometry failed')
         update_mechanical_component(
-            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight.py',
+            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_vertical_flight.py',
             'Update mechanical component success',
             'Update mechanical component failed',
             'ACP-Pre 1',

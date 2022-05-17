@@ -1,13 +1,15 @@
-location_list = {
-    'Resin': Model.NamedSelections.Children[3],
-    'Epoxy': Model.NamedSelections.Children[2],
-    'Steel': Model.NamedSelections.Children[4],
-    'PPS': Model.NamedSelections.Children[1]
-}
+Model.Materials.Children[4].Location = Model.NamedSelections.Children[2]
+Model.Materials.Children[5].Location = Model.NamedSelections.Children[1]
+Model.Materials.Children[6].Location = Model.NamedSelections.Children[5]
+Model.Materials.Children[7].Location = Model.NamedSelections.Children[6]
 
-assigment_list = [
-    ('Resin', Model.Materials.Children[4]),
-    ('Epoxy', Model.Materials.Children[5]),
-    ('Steel', Model.Materials.Children[6]),
-    ('PPS', Model.Materials.Children[7])
-]
+# Start finding and setting the thinkness of plane bodies from named selection Composite
+bodies_selection_list = Model.NamedSelections.Children[3].Location
+bodies_id_list = bodies_selection_list.Entities
+
+for body in bodies_id_list:
+    body.Thickness = 2
+
+# Generate mesh
+mesh = Model.Mesh
+mesh.GenerateMesh()
