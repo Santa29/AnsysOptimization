@@ -97,7 +97,7 @@ def update_project():
         update_component('Geom 3', 'Geometry', 'Update geometry success', 'Update geometry failed')
         # Start update model component in Acp-pre
         update_mechanical_component(
-            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight.py',
+            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_base.py',
             'Update mechanical component success',
             'Update mechanical component failed',
             'ACP-Pre',
@@ -117,7 +117,7 @@ def update_project():
         run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
         # Start update model component in Acp-pre
         update_mechanical_component(
-            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_vertical_flight.py',
+            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_base.py',
             'Update mechanical component success',
             'Update mechanical component failed',
             'ACP-Pre 1',
@@ -125,9 +125,17 @@ def update_project():
         )
         # Start update setup component in ACP-pre
         update_component('Geom 2', 'Geometry', 'Update geometry success', 'Update geometry failed')
+        # Start update component model in static structural
+        update_mechanical_component(
+            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight_total.py',
+            'Update total mechanical component success',
+            'Update total mechanical component failed',
+            'SYS',
+            'Model 2'
+        )
         # Start update component in mechanical model for modal calculations
         update_mechanical_component(
-            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_vertical_flight_modal.py',
+            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_modal.py',
             'Update mechanical component success',
             'Update mechanical component failed',
             'SYS 7',
@@ -194,7 +202,7 @@ for el in a.select_by_series('need_calculate'):
     current_object_list.append(WBLangeronModel(el))
 
 for i, el in enumerate(current_object_list):
-    if i != 1:
+    if i != 10:
         continue
     # Change parameters for mechanical
     change_parameter('P13', str(el.wall_length))

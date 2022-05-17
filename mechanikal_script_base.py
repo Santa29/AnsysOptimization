@@ -10,8 +10,7 @@ ns_polyester = ['Fullfillment', '']
 ns_epoxy = ['Epoxy', '']
 ns_steel = ['Antiflatter', '']
 ns_pps = ['Composite', '']
-ns_langeron_wall = ['Langeron_wall', '']
-named_selections = [ns_pps, ns_polyester, ns_steel, ns_epoxy, ns_langeron_wall]
+named_selections = [ns_pps, ns_polyester, ns_steel, ns_epoxy]
 
 # Fill the material assignment list with actual data
 for material in Model.Materials.Children:
@@ -41,7 +40,3 @@ for body in bodies_id_list:
 # Generate mesh
 mesh = Model.Mesh
 mesh.GenerateMesh()
-
-# Find and fill the remote point coordinates
-remote_point = Model.RemotePoints.Children[0]
-remote_point.Location = ns_langeron_wall[1]
