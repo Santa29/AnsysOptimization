@@ -93,15 +93,9 @@ def get_parameter(param_id):
 def update_project():
     """This function update the project in Workbench window"""
     try:
-        update_component('Geom 2', 'Geometry', 'Update geometry success', 'Update geometry failed')
+        # !!! Start update vertical flight !!!
         update_component('Geom 3', 'Geometry', 'Update geometry success', 'Update geometry failed')
-        update_mechanical_component(
-            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_vertical_flight.py',
-            'Update mechanical component success',
-            'Update mechanical component failed',
-            'ACP-Pre 1',
-            'Model 1'
-        )
+        # Start update model component in Acp-pre
         update_mechanical_component(
             r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight.py',
             'Update mechanical component success',
@@ -109,14 +103,35 @@ def update_project():
             'ACP-Pre',
             'Model'
         )
-        run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
+        # Start update setup component in ACP-pre
         run_script('ACP-Pre', 'Setup 2', acp_pre_path, 'ACP-pre-vert successful updated', 'ACP-pre failed to update')
+        # Start update model component in static structural
         update_mechanical_component(
             r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight_total.py',
             'Update total mechanical component success',
             'Update total mechanical component failed',
             'SYS',
             'Model 2'
+        )
+        # !!! Start update horizontal flight !!!
+        run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
+        # Start update model component in Acp-pre
+        update_mechanical_component(
+            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_vertical_flight.py',
+            'Update mechanical component success',
+            'Update mechanical component failed',
+            'ACP-Pre 1',
+            'Model 1'
+        )
+        # Start update setup component in ACP-pre
+        update_component('Geom 2', 'Geometry', 'Update geometry success', 'Update geometry failed')
+        # Start update component in mechanical model for modal calculations
+        update_mechanical_component(
+            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_vertical_flight_modal.py',
+            'Update mechanical component success',
+            'Update mechanical component failed',
+            'SYS 7',
+            'Model 9'
         )
         Update()
     except:
