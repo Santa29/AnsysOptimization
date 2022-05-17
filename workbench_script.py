@@ -114,7 +114,7 @@ def update_project():
             'Model 2'
         )
         # !!! Start update horizontal flight !!!
-        run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
+        update_component('Geom 2', 'Geometry', 'Update geometry success', 'Update geometry failed')
         # Start update model component in Acp-pre
         update_mechanical_component(
             r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_base.py',
@@ -124,7 +124,7 @@ def update_project():
             'Model 1'
         )
         # Start update setup component in ACP-pre
-        update_component('Geom 2', 'Geometry', 'Update geometry success', 'Update geometry failed')
+        run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
         # Start update component model in static structural
         update_mechanical_component(
             r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight_total.py',
