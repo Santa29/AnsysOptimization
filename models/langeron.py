@@ -165,6 +165,12 @@ class LangeronModel:
             4: 2,
             5: 3
         }
+        polymer_volume_coordinate_dict = {
+            7: 0,
+            8: 1,
+            9: 2,
+            10: 3,
+        }
         self.bytestring += format(int(len(self.shell_integer_code) / 2), '04b')
         self.bytestring += format(int(len(self.langeron_integer_code) / 2), '04b')
         argument = []
@@ -186,6 +192,8 @@ class LangeronModel:
             self.bytestring += format(el, '06b')
         self.bytestring += format(getattr(self, 'wall_length') - 15, '05b')
         self.bytestring += format(getattr(self, 'wall_angle'), '06b')
+        argument = polymer_volume_coordinate_dict[getattr(self, 'polymer_volume_coordinate')]
+        self.bytestring += format(argument, '02b')
 
     def read_from_bites(self, income_bytestring):
         # Read the number of shell layers
@@ -210,6 +218,12 @@ class LangeronModel:
             6: 700,
             7: 800
         }
+        polymer_dict = {
+            0: 7,
+            1: 8,
+            2: 9,
+            3: 10
+        }
         result_dict = {
             'shell_integer_code': '',
             'langeron_integer_code': '',
@@ -217,7 +231,8 @@ class LangeronModel:
             'antiflatter_length': '',
             'antiflatter_value': '',
             'wall_length': '',
-            'wall_angle': ''
+            'wall_angle': '',
+            'polymer_volume_coordinate': ''
         }
         temporary_value = 8
         for i in range(number_of_shell_layers):
@@ -250,6 +265,11 @@ class LangeronModel:
         temporary_value += 5
         # Read wall_angle
         result_dict['wall_angle'] = int(income_bytestring[temporary_value:], 2)
+        temporary_value += 6
+        # Read polymer volume coordinate
+        tmp = int(income_bytestring[temporary_value:temporary_value + 2], 2)
+        tmp = polymer_dict[tmp]
+        result_dict['polymer_volume_coordinate'] = tmp
 
         for key, value in result_dict.items():
             setattr(self, key, value)

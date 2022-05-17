@@ -52,7 +52,7 @@ def update_component(system_name, container_name, message_success, message_fail)
     system = GetSystem(Name=system_name)
     container = system.GetComponent(Name=container_name)
     try:
-        container.Update(AllDependencies=True)
+        container.Refresh()
         logging(message_success)
     except:
         logging(message_fail)
@@ -92,60 +92,55 @@ def get_parameter(param_id):
 
 def update_project():
     """This function update the project in Workbench window"""
-    try:
-        # !!! Start update vertical flight !!!
-        update_component('Geom 3', 'Geometry', 'Update geometry success', 'Update geometry failed')
-        # Start update model component in Acp-pre
-        update_mechanical_component(
-            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_base.py',
-            'Update mechanical component success',
-            'Update mechanical component failed',
-            'ACP-Pre',
-            'Model'
-        )
-        # Start update setup component in ACP-pre
-        run_script('ACP-Pre', 'Setup 2', acp_pre_path, 'ACP-pre-vert successful updated', 'ACP-pre failed to update')
-        # Start update model component in static structural
-        update_mechanical_component(
-            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight_total.py',
-            'Update total mechanical component success',
-            'Update total mechanical component failed',
-            'SYS',
-            'Model 2'
-        )
-        # !!! Start update horizontal flight !!!
-        update_component('Geom 2', 'Geometry', 'Update geometry success', 'Update geometry failed')
-        # Start update model component in Acp-pre
-        update_mechanical_component(
-            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_base.py',
-            'Update mechanical component success',
-            'Update mechanical component failed',
-            'ACP-Pre 1',
-            'Model 1'
-        )
-        # Start update setup component in ACP-pre
-        run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
-        # Start update component model in static structural
-        update_mechanical_component(
-            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight_total.py',
-            'Update total mechanical component success',
-            'Update total mechanical component failed',
-            'SYS',
-            'Model 2'
-        )
-        # Start update component in mechanical model for modal calculations
-        update_mechanical_component(
-            r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_modal.py',
-            'Update mechanical component success',
-            'Update mechanical component failed',
-            'SYS 7',
-            'Model 9'
-        )
-        Update()
-    except:
-        logging('Update_failing')
-    else:
-        logging('Update success')
+    # !!! Start update vertical flight !!!
+    update_component('Geom 3', 'Geometry', 'Update geometry success', 'Update geometry failed')
+    # Start update model component in Acp-pre
+    update_mechanical_component(
+        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_base.py',
+        'Update mechanical component success',
+        'Update mechanical component failed',
+        'ACP-Pre',
+        'Model'
+    )
+    # Start update setup component in ACP-pre
+    run_script('ACP-Pre', 'Setup 2', acp_pre_path, 'ACP-pre-vert successful updated', 'ACP-pre failed to update')
+    # Start update model component in static structural
+    update_mechanical_component(
+        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight_total.py',
+        'Update total mechanical component success',
+        'Update total mechanical component failed',
+        'SYS',
+        'Model'
+    )
+    # !!! Start update horizontal flight !!!
+    update_component('Geom 2', 'Geometry', 'Update geometry success', 'Update geometry failed')
+    # Start update model component in Acp-pre
+    update_mechanical_component(
+        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_base.py',
+        'Update mechanical component success',
+        'Update mechanical component failed',
+        'ACP-Pre 1',
+        'Model'
+    )
+    # Start update setup component in ACP-pre
+    run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
+    # Start update component model in static structural
+    update_mechanical_component(
+        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight_total.py',
+        'Update total mechanical component success',
+        'Update total mechanical component failed',
+        'SYS',
+        'Model'
+    )
+    # Start update component in mechanical model for modal calculations
+    update_mechanical_component(
+        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_base.py',
+        'Update mechanical component success',
+        'Update mechanical component failed',
+        'SYS 7',
+        'Model'
+    )
+    Update()
 
 
 def update_mechanical_component(script_path, message_success, message_fail, system_name, model_name):
@@ -202,7 +197,7 @@ for el in a.select_by_series('need_calculate'):
     current_object_list.append(WBLangeronModel(el))
 
 for i, el in enumerate(current_object_list):
-    if i != 10:
+    if i != 7:
         continue
     # Change parameters for mechanical
     change_parameter('P13', str(el.wall_length))
