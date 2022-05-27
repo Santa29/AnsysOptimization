@@ -13,6 +13,9 @@ ns_pps = ['Composite', '']
 ns_langeron_wall = ['Langeron_wall', '']
 named_selections = [ns_pps, ns_polyester, ns_steel, ns_epoxy, ns_langeron_wall]
 
+# Update geometry
+Model.Geometry.UpdateGeometryFromSource()
+
 # Fill the material assignment list with actual data
 for material in Model.Materials.Children:
     for assignment in material_assignments:

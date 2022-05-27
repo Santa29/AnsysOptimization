@@ -318,7 +318,7 @@ else:
 position = GetRootPart().DatumPlanes[0].Curves[constraint_1].GetChildren[ICurvePoint]()[constraint_2]
 position_x, position_y, position_z = position.Position
 origin = Point2D.Create(MM(position_x * 1000), MM(position_y * 1000))
-result = SketchCircle.Create(origin, MM(Parameters.antiflatter_diam))
+result = SketchCircle.Create(origin, MM(Parameters.antiflatter_diam / 4))
 # EndBlock
 
 # Delete Selection

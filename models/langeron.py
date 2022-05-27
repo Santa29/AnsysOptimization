@@ -160,16 +160,16 @@ class LangeronModel:
             800: 7
         }
         antiflatter_diam_dict = {
-            2: 0,
-            3: 1,
-            4: 2,
-            5: 3
+            1: 0,
+            2: 1,
+            3: 2,
+            4: 3
         }
         polymer_volume_coordinate_dict = {
-            7: 0,
-            8: 1,
-            9: 2,
-            10: 3,
+            14: 0,
+            16: 1,
+            18: 2,
+            20: 3,
         }
         self.bytestring += format(int(len(self.shell_integer_code) / 2), '04b')
         self.bytestring += format(int(len(self.langeron_integer_code) / 2), '04b')
@@ -190,7 +190,7 @@ class LangeronModel:
             argument.append(tmp)
         for el in argument:
             self.bytestring += format(el, '06b')
-        self.bytestring += format(getattr(self, 'wall_length') - 15, '05b')
+        self.bytestring += format(getattr(self, 'wall_length') - 25, '05b')
         self.bytestring += format(getattr(self, 'wall_angle'), '06b')
         argument = polymer_volume_coordinate_dict[getattr(self, 'polymer_volume_coordinate')]
         self.bytestring += format(argument, '02b')
@@ -203,10 +203,10 @@ class LangeronModel:
         # Read the values of shell angles
         temporary_list = []
         antiflatter_diam_dict = {
-            0: 2,
-            1: 3,
-            2: 4,
-            3: 5
+            0: 1,
+            1: 2,
+            2: 3,
+            3: 4
         }
         length_dict = {
             0: 100,
@@ -219,10 +219,10 @@ class LangeronModel:
             7: 800
         }
         polymer_dict = {
-            0: 7,
-            1: 8,
-            2: 9,
-            3: 10
+            0: 14,
+            1: 16,
+            2: 18,
+            3: 20
         }
         result_dict = {
             'shell_integer_code': '',
@@ -261,7 +261,7 @@ class LangeronModel:
         for el in temporary_list:
             result_dict['langeron_integer_code'] += str(el)
         # Read wall_length
-        result_dict['wall_length'] = int(income_bytestring[temporary_value: temporary_value + 5], 2) + 15
+        result_dict['wall_length'] = int(income_bytestring[temporary_value: temporary_value + 5], 2) + 25
         temporary_value += 5
         # Read wall_angle
         result_dict['wall_angle'] = int(income_bytestring[temporary_value:], 2)

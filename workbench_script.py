@@ -52,7 +52,7 @@ def update_component(system_name, container_name, message_success, message_fail)
     system = GetSystem(Name=system_name)
     container = system.GetComponent(Name=container_name)
     try:
-        container.Refresh()
+        container.Update(AllDependencies=True)
         logging(message_success)
     except:
         logging(message_fail)
@@ -103,7 +103,7 @@ def update_project():
         'Model'
     )
     # Start update setup component in ACP-pre
-    run_script('ACP-Pre', 'Setup 2', acp_pre_path, 'ACP-pre-vert successful updated', 'ACP-pre failed to update')
+    run_script('ACP-Pre', 'Setup', acp_pre_path, 'ACP-pre-vert successful updated', 'ACP-pre failed to update')
     # Start update model component in static structural
     update_mechanical_component(
         r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight_total.py',
@@ -123,13 +123,13 @@ def update_project():
         'Model'
     )
     # Start update setup component in ACP-pre
-    run_script('ACP-Pre 1', 'Setup 3', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
+    run_script('ACP-Pre 1', 'Setup', acp_pre_path, 'ACP-pre-hor successful updated', 'ACP-pre failed to update')
     # Start update component model in static structural
     update_mechanical_component(
         r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_horizontal_flight_total.py',
         'Update total mechanical component success',
         'Update total mechanical component failed',
-        'SYS',
+        'SYS 1',
         'Model'
     )
     # Start update component in mechanical model for modal calculations
@@ -138,6 +138,14 @@ def update_project():
         'Update mechanical component success',
         'Update mechanical component failed',
         'SYS 7',
+        'Model'
+    )
+    # Start update model component in modal calculations
+    update_mechanical_component(
+        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_base.py',
+        'Update mechanical component success',
+        'Update mechanical component failed',
+        'SYS 3',
         'Model'
     )
     Update()
@@ -160,7 +168,8 @@ def update_mechanical_component(script_path, message_success, message_fail, syst
     DSscript = open(script_path, 'r')
     DSscriptCommand = DSscript.read()
     DSscript.close()
-    container.Edit(Interactive=False)
+    # container.Edit(Interactive=False)
+    container.Edit()
     try:
         container.SendCommand(Language='Python', Command=DSscriptCommand)
         logging(message_success)
@@ -197,7 +206,7 @@ for el in a.select_by_series('need_calculate'):
     current_object_list.append(WBLangeronModel(el))
 
 for i, el in enumerate(current_object_list):
-    if i != 7:
+    if i != 11:
         continue
     # Change parameters for mechanical
     change_parameter('P13', str(el.wall_length))

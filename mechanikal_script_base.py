@@ -12,6 +12,9 @@ ns_steel = ['Antiflatter', '']
 ns_pps = ['Composite', '']
 named_selections = [ns_pps, ns_polyester, ns_steel, ns_epoxy]
 
+# Update geometry
+Model.Geometry.UpdateGeometryFromSource()
+
 # Fill the material assignment list with actual data
 for material in Model.Materials.Children:
     for assignment in material_assignments:

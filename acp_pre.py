@@ -17,7 +17,7 @@ def build_stackup(angles, stackup_name):
 
 def create_plies(ply_name, stackup_name):
     db.models['ACP Model'].modeling_groups['ModelingGroup.1'].plies[ply_name].ply_material = \
-        db.models['ACP Model'].material_data.stackups[stackup_name]
+    db.models['ACP Model'].material_data.stackups[stackup_name]
 
 
 def read_number_of_layers(layers_id, model='langeron'):
@@ -76,6 +76,9 @@ def create_orientation_lists(
         append_encoding_values_to_list(shell_list, shell_angles_set)
         return shell_list
 
+
+# Get the new geometry
+db.models['ACP Model'].update()
 
 # Prepare the angles lists
 wall_angles = []
