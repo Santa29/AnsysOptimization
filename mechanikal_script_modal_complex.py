@@ -1,19 +1,18 @@
 # Create the material assignments list
-material_polyester = ['Resin Polyester Assignment(ACP (Pre))', '', 'Fullfillment(ACP (Pre))']
-material_epoxy = ['E-Glass Assignment(ACP (Pre))', '', 'Epoxy(ACP (Pre))']
-material_steel = ['Structural Steel Assignment(ACP (Pre))', '', 'Antiflatter(ACP (Pre))']
-material_pps = ['PPS with 40% CF Assignment(ACP (Pre))', '', 'Composite(ACP (Pre))']
+material_polyester = ['Resin Polyester Assignment', '', 'Fullfillment']
+material_epoxy = ['E-Glass Assignment', '', 'Epoxy']
+material_steel = ['Structural Steel Assignment', '', 'Antiflatter']
+material_pps = ['PPS with 40% CF Assignment', '', 'Composite']
 material_assignments = [material_pps, material_steel, material_epoxy, material_polyester]
 
 # Create the named selections list
-ns_polyester = ['Fullfillment(ACP (Pre))', '']
-ns_epoxy = ['Epoxy(ACP (Pre))', '']
-ns_steel = ['Antiflatter(ACP (Pre))', '']
-ns_pps = ['Composite(ACP (Pre))', '']
-ns_fixed_support = ['Fixed Support(ACP (Pre))', '']
-ns_langeron_wall = ['Langeron_wall(ACP (Pre))', '']
+ns_polyester = ['Fullfillment', '']
+ns_epoxy = ['Epoxy', '']
+ns_steel = ['Antiflatter', '']
+ns_pps = ['Composite', '']
 ns_pressure = ['Pressure(ACP (Pre))', '']
-named_selections = [ns_pps, ns_polyester, ns_steel, ns_epoxy, ns_langeron_wall]
+ns_fixed_support = ['Fixed Support(ACP (Pre))', '']
+named_selections = [ns_pps, ns_polyester, ns_steel, ns_epoxy]
 
 # Update geometry
 Model.Geometry.UpdateGeometryFromSource()
@@ -47,14 +46,12 @@ for body in bodies_id_list:
 mesh = Model.Mesh
 mesh.GenerateMesh()
 
-# Find and fill the remote point coordinates
-remote_point = Model.RemotePoints.Children[0]
-remote_point.Location = ns_langeron_wall[1]
-
-# Find and fill Fixed Support boundary condition and imported load
+# Find and fill Fixed Support boundary in both analyses
 analysis_children_list = Model.Analyses[0].Children
 for child in analysis_children_list:
     if child.Name == 'Fixed Support':
         child.Location = ns_fixed_support[1]
-    elif child.Name == 'Imported Load (M2)':
-        child.Children[0].Location = ns_pressure[1]
+analysis_children_list = Model.Analyses[1].Children
+for child in analysis_children_list:
+    if child.Name == 'Fixed Support':
+        child.Location = ns_fixed_support[1]

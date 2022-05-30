@@ -134,7 +134,7 @@ def update_project():
     )
     # Start update component in mechanical model for modal calculations
     update_mechanical_component(
-        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_base.py',
+        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_modal_simple.py',
         'Update mechanical component success',
         'Update mechanical component failed',
         'SYS 7',
@@ -142,7 +142,7 @@ def update_project():
     )
     # Start update model component in modal calculations
     update_mechanical_component(
-        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_base.py',
+        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_modal_complex.py',
         'Update mechanical component success',
         'Update mechanical component failed',
         'SYS 3',

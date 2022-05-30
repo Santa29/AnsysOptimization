@@ -45,11 +45,3 @@ for body in bodies_id_list:
 # Generate mesh
 mesh = Model.Mesh
 mesh.GenerateMesh()
-
-# Find and fill Fixed Support boundary condition and imported load
-analysis_children_list = Model.Analyses[0].Children
-for child in analysis_children_list:
-    if child.Name == 'Fixed Support':
-        child.Location = ns_fixed_support[1]
-    elif child.Name == 'Imported Load (M2)':
-        child.Children[0].Location = ns_pressure[1]
