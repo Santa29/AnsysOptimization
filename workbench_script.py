@@ -63,6 +63,7 @@ def run_script(name, component, script_path, message_success, message_fail):
     try:
         system1 = GetSystem(Name=name)
         setup1 = system1.GetContainer(ComponentName=component)
+        setup1.Refresh()
         setup1.RunScript(ScriptPath=script_path)
         setup1.Update(AllDependencies=True)
     except:
@@ -112,6 +113,14 @@ def update_project():
         'SYS',
         'Model'
     )
+    update_solution_component(
+        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_solution_static.py',
+        'Update solution mechanical component success',
+        'Update solution mechanical component failed',
+        'SYS',
+        'Model',
+        'Setup'
+    )
     # !!! Start update horizontal flight !!!
     update_component('Geom 2', 'Geometry', 'Update geometry success', 'Update geometry failed')
     # Start update model component in Acp-pre
@@ -132,6 +141,14 @@ def update_project():
         'SYS 1',
         'Model'
     )
+    update_solution_component(
+        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_solution_static.py',
+        'Update total mechanical component success',
+        'Update total mechanical component failed',
+        'SYS 1',
+        'Model',
+        'Setup'
+    )
     # Start update component in mechanical model for modal calculations
     update_mechanical_component(
         r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_modal_simple.py',
@@ -147,6 +164,14 @@ def update_project():
         'Update mechanical component failed',
         'SYS 3',
         'Model'
+    )
+    update_solution_component(
+        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_solution_modal.py',
+        'Update mechanical component success',
+        'Update mechanical component failed',
+        'SYS 3',
+        'Model',
+        'Setup'
     )
     Update()
 
@@ -170,14 +195,38 @@ def update_mechanical_component(script_path, message_success, message_fail, syst
     DSscript.close()
     # container.Edit(Interactive=False)
     container.Edit()
-    try:
-        container.SendCommand(Language='Python', Command=DSscriptCommand)
-        logging(message_success)
-    except:
-        logging(message_fail)
+    container.SendCommand(Language='Python', Command=DSscriptCommand)
+    logging(message_success)
     container.Close()
     model_component = system.GetComponent(Name=model_name)
     model_component.Update(AllDependencies=True)
+
+
+def update_solution_component(script_path, message_success, message_fail, system_name, model_name, solution_name):
+    """
+    This function update the model component in workbench script tree with the corresponding python script to avoid
+    errors with material assignment.
+    params:
+    script_path: str -> path to the script in r'' form
+    message_success: str -> success message to log file
+    message_fail: str -> fail message to log file
+    system_name: str -> name of updating system, from workbench project tree
+    model_name: str -> name of updating component, from workbench project tree
+    """
+    system = GetSystem(Name=system_name)
+    container = system.GetContainer(ComponentName=solution_name)
+    container.Refresh()
+    DSscript = open(script_path, 'r')
+    DSscriptCommand = DSscript.read()
+    DSscript.close()
+    # container.Edit(Interactive=False)
+    container.Edit()
+    container.SendCommand(Language='Python', Command=DSscriptCommand)
+    logging(message_success)
+    model_component = system.GetContainer(ComponentName=model_name)
+    model_component.Exit()
+    container = system.GetComponent(Name=solution_name)
+    container.Update(AllDependencies=True)
 
 
 def split_integer_id_to_list(integer_id):
@@ -206,7 +255,7 @@ for el in a.select_by_series('need_calculate'):
     current_object_list.append(WBLangeronModel(el))
 
 for i, el in enumerate(current_object_list):
-    if i != 11:
+    if i != 3:
         continue
     # Change parameters for mechanical
     change_parameter('P13', str(el.wall_length))
@@ -228,8 +277,8 @@ for i, el in enumerate(current_object_list):
     change_parameter('P41', number_of_layers)
     change_parameter('P35', el.shell_integer_code)
     change_parameter('P44', el.shell_integer_code)
-    change_parameter('P66', el.langeron_integer_code[0:8])
-    change_parameter('P67', el.langeron_integer_code[8:])
+    change_parameter('P84', el.langeron_integer_code[0:8])
+    change_parameter('P85', el.langeron_integer_code[8:])
     change_parameter('P36', el.langeron_integer_code[0:8])
     change_parameter('P37', el.langeron_integer_code[8:])
     change_parameter('P42', el.langeron_integer_code[0:8])
@@ -248,7 +297,7 @@ for i, el in enumerate(current_object_list):
     tmp += ', ' + get_parameter('P80') + ', ' + get_parameter('P81')
     el.value_spectrum_modal_max = tmp
     # Read wing mass
-    el.mass = round(float(get_parameter('P60')) * 1000)
+    el.mass = round(float(get_parameter('P87')) * 1000)
     # Calculate and read tip_flap
     max_deformation_x = max((float(get_parameter('P61')), float(get_parameter('P68'))))
     max_deformation_y = max((float(get_parameter('P74')), float(get_parameter('P75'))))

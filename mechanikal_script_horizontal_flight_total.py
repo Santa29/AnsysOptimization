@@ -13,7 +13,7 @@ ns_pps = ['Composite(ACP (Pre))', '']
 ns_fixed_support = ['Fixed Support(ACP (Pre))', '']
 ns_langeron_wall = ['Langeron_wall(ACP (Pre))', '']
 ns_pressure = ['Pressure(ACP (Pre))', '']
-named_selections = [ns_pps, ns_polyester, ns_steel, ns_epoxy, ns_langeron_wall]
+named_selections = [ns_pps, ns_polyester, ns_steel, ns_epoxy, ns_langeron_wall, ns_fixed_support, ns_pressure]
 
 # Update geometry
 Model.Geometry.UpdateGeometryFromSource()
@@ -37,11 +37,9 @@ for assignment in material_assignments:
             assignment[1].Location = selection[1]
 
 # Start finding and setting the thinkness of plane bodies from named selection Composite
-current_selection = ns_pps[1].Location
-bodies_id_list = current_selection.Entities
-
-for body in bodies_id_list:
-    body.Thickness = 2
+for body in Model.Geometry.Children:
+    if body.Name == 'Thickness':
+        body.Location = ns_pps[1]
 
 # Generate mesh
 mesh = Model.Mesh
@@ -49,12 +47,12 @@ mesh.GenerateMesh()
 
 # Find and fill the remote point coordinates
 remote_point = Model.RemotePoints.Children[0]
-remote_point.Location = ns_langeron_wall[1]
+remote_point.Location = ns_pressure[1]
 
 # Find and fill Fixed Support boundary condition and imported load
 analysis_children_list = Model.Analyses[0].Children
 for child in analysis_children_list:
     if child.Name == 'Fixed Support':
         child.Location = ns_fixed_support[1]
-    elif child.Name == 'Imported Load (M2)':
+    elif 'Imported Load' in child.Name:
         child.Children[0].Location = ns_pressure[1]

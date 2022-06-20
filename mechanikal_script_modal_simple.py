@@ -10,9 +10,9 @@ ns_polyester = ['Fullfillment', '']
 ns_epoxy = ['Epoxy', '']
 ns_steel = ['Antiflatter', '']
 ns_pps = ['Composite', '']
-ns_pressure = ['Pressure(ACP (Pre))', '']
-ns_fixed_support = ['Fixed Support(ACP (Pre))', '']
-named_selections = [ns_pps, ns_polyester, ns_steel, ns_epoxy]
+ns_pressure = ['Pressure', '']
+ns_fixed_support = ['Fixed Support', '']
+named_selections = [ns_pps, ns_polyester, ns_steel, ns_epoxy, ns_pressure, ns_fixed_support]
 
 # Update geometry
 Model.Geometry.UpdateGeometryFromSource()
@@ -36,11 +36,10 @@ for assignment in material_assignments:
             assignment[1].Location = selection[1]
 
 # Start finding and setting the thinkness of plane bodies from named selection Composite
-current_selection = ns_pps[1].Location
-bodies_id_list = current_selection.Entities
-
-for body in bodies_id_list:
-    body.Thickness = 2
+for body in Model.Geometry.Children:
+    if body.Name == 'Thickness':
+        body.Location = ns_epoxy[1]
+        body.Location = ns_pps[1]
 
 # Generate mesh
 mesh = Model.Mesh
