@@ -64,8 +64,10 @@ def run_script(name, component, script_path, message_success, message_fail):
         system1 = GetSystem(Name=name)
         setup1 = system1.GetContainer(ComponentName=component)
         setup1.Refresh()
+        setup1.Edit()
         setup1.RunScript(ScriptPath=script_path)
         setup1.Update(AllDependencies=True)
+        setup1.Close()
     except:
         logging(message_fail)
     else:
@@ -255,8 +257,6 @@ for el in a.select_by_series('need_calculate'):
     current_object_list.append(WBLangeronModel(el))
 
 for i, el in enumerate(current_object_list):
-    if i != 3:
-        continue
     # Change parameters for mechanical
     change_parameter('P13', str(el.wall_length))
     change_parameter('P14', str(el.wall_angle))
@@ -297,7 +297,9 @@ for i, el in enumerate(current_object_list):
     tmp += ', ' + get_parameter('P80') + ', ' + get_parameter('P81')
     el.value_spectrum_modal_max = tmp
     # Read wing mass
-    el.mass = round(float(get_parameter('P87')) * 1000)
+    tmp1 = round(float(get_parameter('P88')) * 1000) + round(float(get_parameter('P89')) * 1000)
+    tmp1 += round(float(get_parameter('P90')) * 1000) + round(float(get_parameter('P91')) * 1000)
+    el.mass = tmp1
     # Calculate and read tip_flap
     max_deformation_x = max((float(get_parameter('P61')), float(get_parameter('P68'))))
     max_deformation_y = max((float(get_parameter('P74')), float(get_parameter('P75'))))

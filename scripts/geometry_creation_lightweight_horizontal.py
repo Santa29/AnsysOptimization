@@ -225,30 +225,19 @@ for el in top_line:
     if el[0] <= Parameters.polymer_volume_coordinate:
         top_line_modifyed.append(el)
 # Start searching the new massive points
-for i in range(1, len(top_line_modifyed) - 1):
-    x_1 = top_line_modifyed[i][0]
-    x_2 = top_line_modifyed[i+1][0]
-    y_1 = top_line_modifyed[i][1]
-    y_2 =  top_line_modifyed[i+1][1]
-    x_center = (x_1 + x_2) / 2
-    y_center = (y_1 +y_2) / 2
-    b = (y_2 * x_1 - y_1 * x_2) / (x_1 - x_2)
-    a = (y_1 - b) / x_1
-    delta_l = Parameters.antiflatter_diam + 1.0
-    delta_x = (delta_l ** 2 / (a ** 2 + 1)) ** 0.5
-    print(delta_x, delta_l)
-    delta_y = (delta_l ** 2 - delta_x ** 2) ** 0.5
-    x_4 = x_center + delta_y
-    y_4 = y_center - delta_x
-    top_line_new_points.append([x_4, y_4])
-# Get garantee distance
-counter_top = len(top_line_new_points) - 1
-if top_line_new_points[counter_top][0] > Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 1:
-    top_line_new_points[counter_top][0] = Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 1
+top_line_new_points.append([Parameters.antiflatter_diam, 0])
+top_line_y_coeff = (top_line_modifyed[-1][1] - Parameters.antiflatter_diam) / top_line_modifyed[-1][1]
+top_line_x_coeff = top_line_modifyed[-1][0] / (top_line_modifyed[-1][0] + 2 * Parameters.antiflatter_diam)
+for i in range(1, len(top_line_modifyed)):
+    top_line_new_points.append([
+            top_line_modifyed[i][0] * top_line_x_coeff + Parameters.antiflatter_diam,
+            top_line_modifyed[i][1] * top_line_y_coeff
+            ])
 # Draw the new line
 for el in top_line_new_points:
     points.Add(Point2D.Create(MM(el[0]), MM(el[1])))
 result = SketchNurbs.CreateFrom2DPoints(False, points)
+counter_top = len(top_line_new_points) - 1
 # EndBlock
 
 # Calculate the new spline, all points is perpendicular to the parent lines
@@ -260,32 +249,21 @@ for el in bottom_line:
     if el[0] <= Parameters.polymer_volume_coordinate:
         bottom_line_modifyed.append(el)
 # Start searching the new massive points
-for i in range(1, len(bottom_line_modifyed) - 1):
-    x_1 = bottom_line_modifyed[i][0]
-    x_2 = bottom_line_modifyed[i+1][0]
-    y_1 = bottom_line_modifyed[i][1]
-    y_2 =  bottom_line_modifyed[i+1][1]
-    x_center = (x_1 + x_2) / 2
-    y_center = (y_1 +y_2) / 2
-    b = (y_2 * x_1 - y_1 * x_2) / (x_1 - x_2)
-    a = (y_1 - b) / x_1
-    delta_l = Parameters.antiflatter_diam + 1.0
-    delta_x = (delta_l ** 2 / (a ** 2 + 1)) ** 0.5
-    print(delta_x, delta_l)
-    delta_y = (delta_l ** 2 - delta_x ** 2) ** 0.5
-    x_4 = x_center + delta_y
-    y_4 = y_center + delta_x
-    bottom_line_new_points.append([x_4, y_4])
+bottom_line_new_points.append([Parameters.antiflatter_diam, 0])
+bottom_line_y_coeff = (bottom_line_modifyed[-1][1] + Parameters.antiflatter_diam) / bottom_line_modifyed[-1][1]
+bottom_line_x_coeff = bottom_line_modifyed[-1][0] / (bottom_line_modifyed[-1][0] + 2 * Parameters.antiflatter_diam)
+for i in range(1, len(bottom_line_modifyed)):
+    bottom_line_new_points.append([
+            bottom_line_modifyed[i][0] * bottom_line_x_coeff + Parameters.antiflatter_diam,
+            bottom_line_modifyed[i][1] * bottom_line_y_coeff
+            ])
 # Set the first point as sterting point of top_line massive
 bottom_line_new_points[0] = top_line_new_points[0]
-# Get garantee distance
-counter_bottom = len(bottom_line_new_points) - 1
-if bottom_line_new_points[counter_bottom][0] > Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 1:
-    bottom_line_new_points[counter_bottom][0] = Parameters.polymer_volume_coordinate - Parameters.antiflatter_diam - 1
 # Draw the new line
 for el in bottom_line_new_points:
     points.Add(Point2D.Create(MM(el[0]), MM(el[1])))
 result = SketchNurbs.CreateFrom2DPoints(False, points)
+counter_bottom = len(bottom_line_new_points) - 1
 # EndBlock
 
 # Sketch Line
@@ -299,8 +277,8 @@ coord_dict = {
         1:(2, 1),
         2:(2, 2),
         3:(0, 0),
-        4:(1, math.ceil(len(bottom_line_new_points))),
-        5:(0, math.ceil(len(top_line_new_points))),
+        4:(1, math.ceil(len(bottom_line_new_points) / 2)),
+        5:(0, math.ceil(len(top_line_new_points) / 2)),
         6:(0, 2),
         7:(1, 2)
         }
