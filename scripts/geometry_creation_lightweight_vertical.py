@@ -1,3 +1,4 @@
+
 # Python Script, API Version = V19
 ClearAll()
 import math
@@ -227,7 +228,7 @@ for el in top_line:
 # Start searching the new massive points
 top_line_new_points.append([Parameters.antiflatter_diam, 0])
 top_line_y_coeff = (top_line_modifyed[-1][1] - Parameters.antiflatter_diam) / top_line_modifyed[-1][1]
-top_line_x_coeff = top_line_modifyed[-1][0] / (top_line_modifyed[-1][0] + 2 * Parameters.antiflatter_diam)
+top_line_x_coeff = (top_line_modifyed[-1][0] - 2 * Parameters.antiflatter_diam) / top_line_modifyed[-1][0]
 for i in range(1, len(top_line_modifyed)):
     top_line_new_points.append([
             top_line_modifyed[i][0] * top_line_x_coeff + Parameters.antiflatter_diam,
@@ -251,11 +252,11 @@ for el in bottom_line:
 # Start searching the new massive points
 bottom_line_new_points.append([Parameters.antiflatter_diam, 0])
 bottom_line_y_coeff = (bottom_line_modifyed[-1][1] + Parameters.antiflatter_diam) / bottom_line_modifyed[-1][1]
-bottom_line_x_coeff = bottom_line_modifyed[-1][0] / (bottom_line_modifyed[-1][0] + 2 * Parameters.antiflatter_diam)
+bottom_line_x_coeff = (bottom_line_modifyed[-1][0] - 2 * Parameters.antiflatter_diam) / bottom_line_modifyed[-1][0]
 for i in range(1, len(bottom_line_modifyed)):
     bottom_line_new_points.append([
             bottom_line_modifyed[i][0] * bottom_line_x_coeff + Parameters.antiflatter_diam,
-            bottom_line_modifyed[i][1] * bottom_line_y_coeff
+            bottom_line_modifyed[i][1] * -1 * bottom_line_y_coeff
             ])
 # Set the first point as sterting point of top_line massive
 bottom_line_new_points[0] = top_line_new_points[0]
@@ -292,9 +293,14 @@ else:
     constraint_1 = coord_dict[0][0]
     constraint_2 = coord_dict[0][1]
     
-# Sketch Circle
+# Start create antiflatter
 position = GetRootPart().DatumPlanes[0].Curves[constraint_1].GetChildren[ICurvePoint]()[constraint_2]
 position_x, position_y, position_z = position.Position
+start_point = (position_x * 1000, position_y * 1000, position_z * 1000)
+end_point = (
+    (position_x * math.cos(math.radians(4.5)) - position_y * math.sin(math.radians(4.5))) * 1000,
+    (position_x * math.sin(math.radians(4.5)) - position_y * math.cos(math.radians(4.5))) * 1000,
+    position_z + 1000)
 origin = Point2D.Create(MM(position_x * 1000), MM(position_y * 1000))
 result = SketchCircle.Create(origin, MM(Parameters.antiflatter_diam / 4))
 # EndBlock
@@ -311,18 +317,67 @@ mode = InteractionMode.Solid
 result = ViewHelper.SetViewMode(mode)
 # EndBlock
 
-# Sweep 1 Face
-selection = FaceSelection.Create(GetRootPart().Bodies[0].Faces[4])
-trajectories = EdgeSelection.Create(GetRootPart().Bodies[0].Edges[6])
-options = SweepCommandOptions()
-options.ExtrudeType = ExtrudeType.ForceIndependent
-options.Select = True
-result = Sweep.Execute(selection, trajectories, options, None)
-# EndBlock
-
 # Create Datum Plane
 selection = FaceSelection.Create(GetRootPart().Bodies[2].Faces[0])
 result = DatumPlaneCreator.Create(selection, False, None)
+# EndBlock
+
+# Задать плоскость эскиза
+sectionPlane = Plane.PlaneXY
+result = ViewHelper.SetSketchPlane(sectionPlane, None)
+# EndBlock
+
+# Задать новый эскиз
+result = SketchHelper.StartConstraintSketching()
+# EndBlock
+
+# Точка эскиза
+point = Point2D.Create(MM(start_point[0]), MM(start_point[1]))
+result = SketchPoint.Create(point)
+# EndBlock
+
+# Превратить эскиз в твердое тело
+mode = InteractionMode.Solid
+result = ViewHelper.SetViewMode(mode, None)
+# EndBlock
+
+# Создать базовую плоскость
+selection = Selection.Create(GetRootPart().CoordinateSystems[0].Axes[2])
+result = DatumPlaneCreator.Create(selection, False, None)
+# EndBlock
+
+# Сдвигать вдоль Маркер Z
+selection = Selection.Create(GetRootPart().DatumPlanes[0])
+direction = Move.GetDirection(selection)
+options = MoveOptions()
+result = Move.Translate(selection, direction, MM(100), options)
+# EndBlock
+
+# Задать плоскость эскиза
+sectionPlane = Plane.Create(Frame.Create(Point.Create(MM(0), MM(0), MM(900)), 
+    Direction.DirX, 
+    Direction.DirY))
+result = ViewHelper.SetSketchPlane(sectionPlane, None)
+# EndBlock
+
+# Задать новый эскиз
+result = SketchHelper.StartConstraintSketching()
+# EndBlock
+
+# Точка эскиза
+point = Point2D.Create(MM(end_point[0]), MM(end_point[1]))
+result = SketchPoint.Create(point)
+# EndBlock
+
+# Превратить эскиз в твердое тело
+mode = InteractionMode.Solid
+result = ViewHelper.SetViewMode(mode, None)
+# EndBlock
+
+# Создать линию базы
+selection = Selection.Create([GetRootPart().Curves[0],
+    GetRootPart().Curves[1]])
+result = DatumLineCreator.Create(selection, True, None)
 # EndBlock
 
 # Translate Along Z Handle
@@ -330,6 +385,44 @@ selection = Selection.Create(GetRootPart().DatumPlanes[0])
 direction = Move.GetDirection(selection)
 options = MoveOptions()
 result = Move.Translate(selection, direction, MM(-(1100 - Parameters.antiflatter_length)), options)
+# EndBlock
+
+# Delete Selection
+selection = Selection.Create(GetRootPart().DatumPlanes[1])
+result = Delete.Execute(selection)
+# EndBlock
+
+# Скопировать в буфер
+result = Copy.ToClipboard(FaceSelection.Create(GetRootPart().Bodies[0].Faces[4]))
+# EndBlock
+
+# Вставить из буфера
+result = Paste.FromClipboard()
+# EndBlock
+
+# Изменить видимость объекта
+selection = BodySelection.Create(GetRootPart().Bodies[0])
+visibility = VisibilityType.Hide
+inSelectedView = False
+faceLevel = False
+ViewHelper.SetObjectVisibility(selection, visibility, inSelectedView, faceLevel)
+# EndBlock
+
+# Экструдирование 1 грани
+selection = FaceSelection.Create(GetRootPart().Bodies[3].Faces[0])
+secondarySelection = Selection.Create(GetRootPart().DatumLines[0])
+options = ExtrudeFaceOptions()
+options.ForceDoAsExtrude = True
+options.ExtrudeType = ExtrudeType.Cut
+result = ExtrudeFaces.Execute(selection, secondarySelection, MM(901), options)
+# EndBlock
+
+# Изменить видимость объекта
+selection = BodySelection.Create(GetRootPart().Bodies[0])
+visibility = VisibilityType.Show
+inSelectedView = False
+faceLevel = False
+ViewHelper.SetObjectVisibility(selection, visibility, inSelectedView, faceLevel)
 # EndBlock
 
 # Slice Bodies by Plane
@@ -498,4 +591,19 @@ result = NamedSelection.Create(primarySelection, secondarySelection)
 
 # Rename Named Selection
 result = NamedSelection.Rename("Группа1", "Langeron")
+# EndBlock
+
+# Удалить объекты
+selection = Selection.Create(GetRootPart().DatumLines[0])
+result = Delete.Execute(selection)
+# EndBlock
+
+# Удалить объекты
+selection = Selection.Create(GetRootPart().Curves[0])
+result = Delete.Execute(selection)
+# EndBlock
+
+# Удалить объекты
+selection = Selection.Create(GetRootPart().Curves[0])
+result = Delete.Execute(selection)
 # EndBlock
