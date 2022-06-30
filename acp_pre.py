@@ -45,7 +45,7 @@ def decode_angles_list(value):
     for j in range(counter):
         tmp.append(int(tmp1[j:j + 2]))
     for el in tmp:
-        angles.append(ANGLES_LIST[el - 11])
+        angles.append(ANGLES_LIST[el])
     return angles
 
 

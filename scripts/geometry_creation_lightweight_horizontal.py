@@ -1,3 +1,5 @@
+
+
 # Python Script, API Version = V19
 ClearAll()
 import math
@@ -123,6 +125,7 @@ for i, body in enumerate(bodies_list):
     selection = body
     anchorPoint = Move.GetAnchorPoint(selection)
     axis = Line.Create(anchorPoint, Direction.DirZ)
+    rotation_line = axis
     options = MoveOptions()
     result = Move.Rotate(selection, axis, DEG(-0.5 * i), options)
     # EndBlock
@@ -362,7 +365,7 @@ result = Move.Translate(selection, direction, MM(100), options)
 # EndBlock
 
 # Задать плоскость эскиза
-sectionPlane = Plane.Create(Frame.Create(Point.Create(MM(0), MM(0), MM(900)), 
+sectionPlane = Plane.Create(Frame.Create(Point.Create(MM(0), MM(0), MM(1000)), 
     Direction.DirX, 
     Direction.DirY))
 result = ViewHelper.SetSketchPlane(sectionPlane, None)
@@ -373,13 +376,20 @@ result = SketchHelper.StartConstraintSketching()
 # EndBlock
 
 # Точка эскиза
-point = Point2D.Create(MM(end_point[0]), MM(end_point[1]))
+point = Point2D.Create(MM(start_point[0]), MM(start_point[1]))
 result = SketchPoint.Create(point)
 # EndBlock
 
 # Превратить эскиз в твердое тело
 mode = InteractionMode.Solid
 result = ViewHelper.SetViewMode(mode, None)
+# EndBlock
+
+# Двигать вокруг Маркер Z
+selection = Selection.Create(GetRootPart().Curves[1])
+axis = rotation_line
+options = MoveOptions()
+result = Move.Rotate(selection, axis, DEG(-5), options)
 # EndBlock
 
 # Создать линию базы

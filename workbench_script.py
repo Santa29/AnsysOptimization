@@ -64,10 +64,10 @@ def run_script(name, component, script_path, message_success, message_fail):
         system1 = GetSystem(Name=name)
         setup1 = system1.GetContainer(ComponentName=component)
         setup1.Refresh()
-        setup1.Edit()
+        # setup1.StartACP(ACPMode='pre')
         setup1.RunScript(ScriptPath=script_path)
         setup1.Update(AllDependencies=True)
-        setup1.Close()
+        # setup1.ExitACP(Save=True)
     except:
         logging(message_fail)
     else:
@@ -195,8 +195,7 @@ def update_mechanical_component(script_path, message_success, message_fail, syst
     DSscript = open(script_path, 'r')
     DSscriptCommand = DSscript.read()
     DSscript.close()
-    # container.Edit(Interactive=False)
-    container.Edit()
+    container.Edit(Interactive=False)
     container.SendCommand(Language='Python', Command=DSscriptCommand)
     logging(message_success)
     container.Close()
@@ -221,8 +220,7 @@ def update_solution_component(script_path, message_success, message_fail, system
     DSscript = open(script_path, 'r')
     DSscriptCommand = DSscript.read()
     DSscript.close()
-    # container.Edit(Interactive=False)
-    container.Edit()
+    container.Edit(Interactive=False)
     container.SendCommand(Language='Python', Command=DSscriptCommand)
     logging(message_success)
     model_component = system.GetContainer(ComponentName=model_name)
@@ -257,6 +255,8 @@ for el in a.select_by_series('need_calculate'):
     current_object_list.append(WBLangeronModel(el))
 
 for i, el in enumerate(current_object_list):
+    if i != 1:
+        continue
     # Change parameters for mechanical
     change_parameter('P13', str(el.wall_length))
     change_parameter('P14', str(el.wall_angle))
@@ -297,9 +297,7 @@ for i, el in enumerate(current_object_list):
     tmp += ', ' + get_parameter('P80') + ', ' + get_parameter('P81')
     el.value_spectrum_modal_max = tmp
     # Read wing mass
-    tmp1 = round(float(get_parameter('P88')) * 1000) + round(float(get_parameter('P89')) * 1000)
-    tmp1 += round(float(get_parameter('P90')) * 1000) + round(float(get_parameter('P91')) * 1000)
-    el.mass = tmp1
+    el.mass = get_parameter('P88')
     # Calculate and read tip_flap
     max_deformation_x = max((float(get_parameter('P61')), float(get_parameter('P68'))))
     max_deformation_y = max((float(get_parameter('P74')), float(get_parameter('P75'))))
