@@ -38,14 +38,15 @@ def parameter_value(param_name):
 
 
 def decode_angles_list(value):
-    tmp1 = str(value)
+    integer_code = str(value)
     tmp = []
     angles = []
-    counter = int(len(tmp1) / 2)
-    for j in range(counter):
-        tmp.append(int(tmp1[j:j + 2]))
+    counter = int(len(integer_code) / 2)
+    for j in range(0, counter * 2, 2):
+        integer_value = integer_code[j:j + 2]
+        tmp.append(int(integer_value))
     for el in tmp:
-        angles.append(ANGLES_LIST[el])
+        angles.append(ANGLES_LIST[el - 10])
     return angles
 
 
