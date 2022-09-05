@@ -189,7 +189,7 @@ def update_mechanical_component(script_path, message_success, message_fail, syst
     DSscriptCommand = DSscript.read()
     DSscript.close()
     if mode == 'geometry':
-        container.Edit(IsSpaceClaimgeometry=True, Interactive=False)
+        container.Edit(IsSpaceClaimGeometry=True, Interactive=False)
     else:
         container.Edit(Interactive=False)
     try:
