@@ -1,6 +1,5 @@
 
 
-
 # Python Script, API Version = V19
 ClearAll()
 import math
@@ -8,8 +7,6 @@ import os
 
 base_path = r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\scripts'
 path = os.path.join(base_path, 'rc410.dat')
-
-print(path)
 
 #Get the profile lines from file
 f = open(path, "r")

@@ -32,6 +32,7 @@ acp_pre_path = os.path.join(dir_path, 'acp_pre.py')
 geometry_script_path_vertical = os.path.join(dir_path, 'scripts', 'geometry_creation.py')
 geometry_script_path_horizontal = os.path.join(dir_path, 'scripts', 'geometry_creation_rotate_bodies.py')
 db_path = os.path.join(dir_path, 'experiment.sqlite')
+mass_and_mass_center_file_path = os.path.join(dir_path, 'scripts', 'mass_and_mass_center.txt')
 
 
 def logging(message):
@@ -95,8 +96,23 @@ def get_parameter(param_id):
 
 def update_project():
     """This function update the project in Workbench window"""
+    # Prepare new solution
+    system_1 = GetSystem(Name='SYS 3')
+    system_2 = GetSystem(Name='SYS 2')
+    solution_component_1 = system_1.GetComponent(Name='Setup')
+    solution_component_2 = system_2.GetComponent(Name='Setup')
+    solution_component_1.Clean()
+    solution_component_2.Clean()
     # !!! Start update vertical flight !!!
     update_component('Geom 3', 'Geometry', 'Update geometry success', 'Update geometry failed')
+    update_mechanical_component(
+        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\scripts\geometry_creation_mass_and_mass_center_properties.py',
+        'Update mechanical component success',
+        'Update mechanical component failed',
+        'Geom 3',
+        'Geometry',
+        mode='geometry'
+    )
     # Start update model component in Acp-pre
     update_mechanical_component(
         r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_base.py',
@@ -115,13 +131,13 @@ def update_project():
         'SYS',
         'Model'
     )
-    update_solution_component(
+    update_mechanical_component(
         r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_solution_static.py',
         'Update solution mechanical component success',
         'Update solution mechanical component failed',
         'SYS',
         'Model',
-        'Setup'
+        mode='setup'
     )
     # !!! Start update horizontal flight !!!
     update_component('Geom 2', 'Geometry', 'Update geometry success', 'Update geometry failed')
@@ -143,42 +159,18 @@ def update_project():
         'SYS 1',
         'Model'
     )
-    update_solution_component(
+    update_mechanical_component(
         r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_solution_static.py',
         'Update total mechanical component success',
         'Update total mechanical component failed',
         'SYS 1',
         'Model',
-        'Setup'
-    )
-    # Start update component in mechanical model for modal calculations
-    update_mechanical_component(
-        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_modal_simple.py',
-        'Update mechanical component success',
-        'Update mechanical component failed',
-        'SYS 7',
-        'Model'
-    )
-    # Start update model component in modal calculations
-    update_mechanical_component(
-        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_modal_complex.py',
-        'Update mechanical component success',
-        'Update mechanical component failed',
-        'SYS 3',
-        'Model'
-    )
-    update_solution_component(
-        r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\mechanikal_script_solution_modal.py',
-        'Update mechanical component success',
-        'Update mechanical component failed',
-        'SYS 3',
-        'Model',
-        'Setup'
+        mode='setup'
     )
     Update()
 
 
-def update_mechanical_component(script_path, message_success, message_fail, system_name, model_name):
+def update_mechanical_component(script_path, message_success, message_fail, system_name, model_name, mode='model'):
     """
     This function update the model component in workbench script tree with the corresponding python script to avoid
     errors with material assignment.
@@ -188,6 +180,7 @@ def update_mechanical_component(script_path, message_success, message_fail, syst
     message_fail: str -> fail message to log file
     system_name: str -> name of updating system, from workbench project tree
     model_name: str -> name of updating component, from workbench project tree
+    mode: str -> mode of function behaviour. May be "geometry", "model" (by default), "setup".
     """
     system = GetSystem(Name=system_name)
     container = system.GetContainer(ComponentName=model_name)
@@ -195,38 +188,25 @@ def update_mechanical_component(script_path, message_success, message_fail, syst
     DSscript = open(script_path, 'r')
     DSscriptCommand = DSscript.read()
     DSscript.close()
-    container.Edit(Interactive=False)
-    container.SendCommand(Language='Python', Command=DSscriptCommand)
-    logging(message_success)
-    container.Close()
-    model_component = system.GetComponent(Name=model_name)
-    model_component.Update(AllDependencies=True)
-
-
-def update_solution_component(script_path, message_success, message_fail, system_name, model_name, solution_name):
-    """
-    This function update the model component in workbench script tree with the corresponding python script to avoid
-    errors with material assignment.
-    params:
-    script_path: str -> path to the script in r'' form
-    message_success: str -> success message to log file
-    message_fail: str -> fail message to log file
-    system_name: str -> name of updating system, from workbench project tree
-    model_name: str -> name of updating component, from workbench project tree
-    """
-    system = GetSystem(Name=system_name)
-    container = system.GetContainer(ComponentName=solution_name)
-    container.Refresh()
-    DSscript = open(script_path, 'r')
-    DSscriptCommand = DSscript.read()
-    DSscript.close()
-    container.Edit(Interactive=False)
-    container.SendCommand(Language='Python', Command=DSscriptCommand)
-    logging(message_success)
-    model_component = system.GetContainer(ComponentName=model_name)
-    model_component.Exit()
-    container = system.GetComponent(Name=solution_name)
-    container.Update(AllDependencies=True)
+    if mode == 'geometry':
+        container.Edit(IsSpaceClaimgeometry=True, Interactive=False)
+    else:
+        container.Edit(Interactive=False)
+    try:
+        container.SendCommand(Language='Python', Command=DSscriptCommand)
+        logging(message_success)
+    except:
+        logging(message_fail)
+    if mode == 'geometry':
+        container.Exit()
+    else:
+        container.Close()
+    if mode != 'geometry':
+        model_component = system.GetComponent(Name=model_name)
+        model_component.Update(AllDependencies=True)
+    if mode == 'setup':
+        model_component = system.GetComponent(Name='Setup')
+        model_component.Update(AllDependencies=True)
 
 
 def split_integer_id_to_list(integer_id):
@@ -245,6 +225,13 @@ def split_integer_id_to_list(integer_id):
         return tmp_1 + tmp_2
 
 
+def read_mass_and_mass_center_properties():
+    f = open(mass_and_mass_center_file_path, 'r')
+    mass, mass_center = f.read().split()
+    f.close()
+    return mass, mass_center
+
+
 database_creation.create_table('experiment.sqlite')
 
 logging('Start working')
@@ -255,8 +242,6 @@ for el in a.select_by_series('need_calculate'):
     current_object_list.append(WBLangeronModel(el))
 
 for i, el in enumerate(current_object_list):
-    if i != 1:
-        continue
     # Change parameters for mechanical
     change_parameter('P13', str(el.wall_length))
     change_parameter('P14', str(el.wall_angle))
@@ -290,14 +275,14 @@ for i, el in enumerate(current_object_list):
     el.value_vertical = float(get_parameter('P65'))
     el.value_horizontal = float(get_parameter('P64'))
     # Read and build correct modal string
-    tmp = get_parameter('P53') + ', ' + get_parameter('P54') + ', ' + get_parameter('P55') + ', ' + get_parameter('P56')
-    tmp += ', ' + get_parameter('P57') + ', ' + get_parameter('P58')
+    tmp = get_parameter('P95') + ', ' + get_parameter('P96') + ', ' + get_parameter('P97') + ', ' + get_parameter('P98')
+    tmp += ', ' + get_parameter('P99') + ', ' + get_parameter('P100')
     el.value_spectrum_modal_min = tmp
-    tmp = get_parameter('P76') + ', ' + get_parameter('P77') + ', ' + get_parameter('P78') + ', ' + get_parameter('P79')
-    tmp += ', ' + get_parameter('P80') + ', ' + get_parameter('P81')
+    tmp = get_parameter('P89') + ', ' + get_parameter('P90') + ', ' + get_parameter('P91') + ', ' + get_parameter('P92')
+    tmp += ', ' + get_parameter('P93') + ', ' + get_parameter('P94')
     el.value_spectrum_modal_max = tmp
     # Read wing mass
-    el.mass = get_parameter('P88')
+    el.mass, el.mass_center = read_mass_and_mass_center_properties()
     # Calculate and read tip_flap
     max_deformation_x = max((float(get_parameter('P61')), float(get_parameter('P68'))))
     max_deformation_y = max((float(get_parameter('P74')), float(get_parameter('P75'))))
