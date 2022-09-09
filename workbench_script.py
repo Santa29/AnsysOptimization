@@ -293,11 +293,6 @@ for i, el in enumerate(current_object_list):
     el.tip_flap = max(tmp1, tmp2)
     # Calculate and read the twist_tip
     el.twist_tip = max((float(get_parameter('P69')), float(get_parameter('P70'))))
-    # Calculate and read the mass_center
-    tmp_x = float(get_parameter('P82'))
-    tmp_y = float(get_parameter('P83'))
-    tmp = ((tmp_x - 25) ** 2 + ((tmp_y - 2) ** 2) ** 0.5)
-    el.mass_center = tmp
     el.update_values()
 
 logging('finish work')

@@ -34,7 +34,7 @@ mass_and_coord_list.append([body_list[2].Area * density_steel, body_list[2].Eval
 total_mass = 0.0
 for el in mass_and_coord_list:
     total_mass += el[0] * 0.9
-total_mass -= body_list[2].Area * density_steel * (900 - Parameters.antiflatter_length) / 1000
+total_mass -= body_list[2].Area * density_steel * Parameters.antiflatter_length / 1000
 for body in body_list:
     total_mass += body.Area * density_pps * 0.0012
 tmp_mass = 0
