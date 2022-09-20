@@ -63,7 +63,7 @@ class GeneticAlgorithm:
 
     def mutation(self):
         for child in self.children:
-            for i in range(0, len(child.bytestring)):
+            for i in range(8, len(child.bytestring)):
                 if randint(1, 100) <= 100 * self.mutation_rate:
                     if child.binary_encoding[i]:
                         child.binary_encoding[i] = False

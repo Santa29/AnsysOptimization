@@ -16,7 +16,7 @@ class TestLangeron(unittest.TestCase):
                           'langeron_wall_angles': '46.0, -77.75, 82.5625, 34.75, 29.125',
                           'wall_length': 25,
                           'wall_angle': 23,
-                          'polymer_volume_coordinate': 3,
+                          'polymer_volume_coordinate': 14,
                           'series': 'test_langeron',
                           'model_name': '',
                           'shell_angles': '-60.875, -55.25, -7.4375',
@@ -66,7 +66,7 @@ class TestLangeron(unittest.TestCase):
         self.assertEqual(self.langeron.shell_integer_code, '202239')
         self.assertEqual(self.langeron.langeron_integer_code, '2149594261')
         self.assertEqual(self.langeron.bytestring,
-                         '001101010010100011000111010001101100101110011111000110000011001101010010111')
+                         '001101010010100011000111010101101100101110011111000110000011001100001011100')
 
     def test_read_from_bytes(self):
         self.langeron.prepare_to_wb()

@@ -37,7 +37,7 @@ def test_values_for_logic_test():
         'id': 0,
         'langeron_angles': generate_test_angles(5),
         'langeron_wall_angles': generate_test_angles(5),
-        'wall_length': randint(16, 30),
+        'wall_length': choice([100, 200, 300, 400, 500, 600, 700, 800]),
         'wall_angle': randint(0, 30),
         'polymer_volume_coordinate': randint(11, 30),
         'series': 'test_langeron',
