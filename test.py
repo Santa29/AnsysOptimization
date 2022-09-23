@@ -1,6 +1,7 @@
 """Some minor functions to test the script working"""
 from random import randint, choice
 from models.my_orm import BaseModel
+from models.langeron import LangeronModel
 
 
 def test_values_for_orm(model_type='Shell'):
@@ -30,26 +31,26 @@ def test_values_for_orm(model_type='Shell'):
         return values
 
 
-def test_values_for_logic_test():
+def test_values_for_logic_test(test_id):
     modes_min = generate_modal_values(6)
     modes_max = generate_max_modal_values(modes_min)
     values = {
-        'id': 0,
+        'id': test_id,
         'langeron_angles': generate_test_angles(5),
         'langeron_wall_angles': generate_test_angles(5),
-        'wall_length': choice([100, 200, 300, 400, 500, 600, 700, 800]),
-        'wall_angle': randint(0, 30),
-        'polymer_volume_coordinate': randint(11, 30),
-        'series': 'test_langeron',
+        'wall_length': randint(25, 33),
+        'wall_angle': randint(0, 31),
+        'polymer_volume_coordinate': choice([14, 16, 18, 20]),
+        'series': 'need_calculate',
         'model_name': '',
-        'shell_angles': generate_test_angles(3),
+        'shell_angles': generate_test_angles(2),
         'value_vertical': randint(30, 1000) / 100,
         'value_horizontal': randint(30, 1000) / 100,
         'value_spectrum_modal_min': list_to_string(modes_min),
         'value_spectrum_modal_max': list_to_string(modes_max),
         'antiflatter_value': randint(0, 7),
-        'antiflatter_diam': randint(2, 5),
-        'antiflatter_length': randint(3, 7) * 100,
+        'antiflatter_diam': choice([1, 2, 3, 4]),
+        'antiflatter_length': choice([100, 200, 300, 400, 500, 600, 700, 800]),
         'bytestring': '',
         'creation_time': '',
         'mass': randint(0, 300),
@@ -103,6 +104,12 @@ def generate_max_modal_values(modes_list):
 if __name__ == '__main__':
     a = BaseModel('langeron')
     current_object_list = []
-    for i in range(20):
-        current_object_list.append(test_values_for_orm(model_type='Langeron'))
+    for i in range(50):
+        current_object_list.append(test_values_for_logic_test(i + 21))
     a.bulk_insert(current_object_list)
+    current_object_list = a.select_by_series('need_calculate')
+    langeron_list = []
+    for obj in current_object_list:
+        langeron_list.append(LangeronModel(obj))
+    for obj in langeron_list:
+        obj.prepare_to_wb()

@@ -190,7 +190,7 @@ class LangeronModel:
             argument.append(tmp)
         for el in argument:
             self.bytestring += format(el, '06b')
-        self.bytestring += format(getattr(self, 'wall_length') - 25, '04b')
+        self.bytestring += format(getattr(self, 'wall_length') - 25, '03b')
         self.bytestring += format(getattr(self, 'wall_angle'), '05b')
         argument = polymer_volume_coordinate_dict[getattr(self, 'polymer_volume_coordinate')]
         self.bytestring += format(argument, '02b')
@@ -261,8 +261,8 @@ class LangeronModel:
         for el in temporary_list:
             result_dict['langeron_integer_code'] += str(el)
         # Read wall_length
-        result_dict['wall_length'] = int(income_bytestring[temporary_value: temporary_value + 4], 2) + 25
-        temporary_value += 4
+        result_dict['wall_length'] = int(income_bytestring[temporary_value: temporary_value + 3], 2) + 25
+        temporary_value += 3
         # Read wall_angle
         result_dict['wall_angle'] = int(income_bytestring[temporary_value: temporary_value + 5], 2)
         temporary_value += 5

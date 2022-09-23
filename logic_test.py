@@ -66,7 +66,7 @@ class TestLangeron(unittest.TestCase):
         self.assertEqual(self.langeron.shell_integer_code, '202239')
         self.assertEqual(self.langeron.langeron_integer_code, '2149594261')
         self.assertEqual(self.langeron.bytestring,
-                         '001101010010100011000111010101101100101110011111000110000011001100001011100')
+                         '00110101001010001100011101010110110010111001111100011000001100110001011100')
 
     def test_read_from_bytes(self):
         self.langeron.prepare_to_wb()
