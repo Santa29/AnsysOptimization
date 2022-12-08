@@ -49,5 +49,5 @@ print(total_mass, mass_center)
 # Write results to txt file
 path = os.path.join(base_path, 'mass_and_mass_center.txt')
 f = open(path, 'w')
-f.write(str(total_mass) + '\n' + str(mass_center))
+f.write(str(total_mass * 1000) + '\n' + str(mass_center))
 f.close()

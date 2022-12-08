@@ -7,20 +7,20 @@ import math
 
 from .my_orm import BaseModel
 
-BASELINE_MASS = 430
+BASELINE_MASS = 1230
 BASELINE_VALUE_SPECTRUM = 6
-OMEGA_MAX = 146.9
-OMEGA_MIN = 115.4
+OMEGA_MAX = 450
+OMEGA_MIN = 25.5
 R_NF = 1
 BETA_NF = 2
-BASELINE_SAFETY = 2.6
-MAX_BIAS_TIP_FLAP = 15
+BASELINE_SAFETY = 10
+MAX_BIAS_TIP_FLAP = 6.4
 R_BTF = 1
 betaBTF = 2
 r_twist = 1
 beta_twist = 2
-MAX_TIP_TWIST = 10
-BASE_MASS_CENTER = 113
+MAX_TIP_TWIST = 0.05
+BASE_MASS_CENTER = 0.004
 # Cost functions parameters
 WEIGHT_MASS = 0.25
 WEIGHT_NATURAL_FREQUENCIES = 0.25
@@ -150,8 +150,8 @@ class LangeronModel:
         Set the bytestring form of the class to interact with genetic algorithm.
         """
         length_dict = {
-            100: 0,
-            200: 1,
+            200: 0,
+            250: 1,
             300: 2,
             400: 3,
             500: 4,
@@ -209,8 +209,8 @@ class LangeronModel:
             3: 4
         }
         length_dict = {
-            0: 100,
-            1: 200,
+            0: 200,
+            1: 250,
             2: 300,
             3: 400,
             4: 500,
@@ -330,7 +330,7 @@ class LangeronModel:
         delta_safety_factor = (self.value_horizontal - self.value_vertical) / 2
         g_strength = R_NF * pow(max(0.0, (abs(safety_factor - safety_factor_utopia) - delta_safety_factor) / delta_safety_factor), BETA_NF)
         g_uz = R_BTF * pow(max(0.0, (abs(self.tip_flap) - MAX_BIAS_TIP_FLAP) / MAX_BIAS_TIP_FLAP), betaBTF)
-        g_u_twist = pow(max(0.0, abs(self.twist_tip - MAX_TIP_TWIST) / MAX_TIP_TWIST), beta_twist)
+        g_u_twist = pow(max(0.0, abs(abs(self.twist_tip) - MAX_TIP_TWIST) / MAX_TIP_TWIST), beta_twist)
         return WEIGHT_STRENGTH * g_strength + WEIGHT_UZ * g_u_twist + WEIGHT_UTWIST * g_uz
 
     def get_cost(self):

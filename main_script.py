@@ -18,7 +18,7 @@ log_path = os.path.join(dir_path, 'scripts', 'log.txt')
 db_path = os.path.join(dir_path, 'experiment.sqlite')
 wb_script_path = r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\workbench_script.py'
 wb_project_path = r'C:\Ansys projects\Lopast_helicopter\Lopast_helicopter.wbpj'
-wb_main_path = r'C:\Program Files\ANSYS Inc\v221\Framework\bin\Win64\runWB2.exe'
+wb_main_path = r'C:\Program Files\ANSYS Inc\V221\Framework\bin\win64\runwb2'
 
 table = BaseModel('langeron')
 
@@ -29,16 +29,11 @@ def make_optimization(parents_list):
     future analyse
     """
     optimization = GeneticAlgorithm(parents_list)
-    for k in range(10):
-        tmp = optimization.selection()
-        optimization.crossover(tmp)
-    optimization.mutation()
     optimization.optimization()
     list_to_bulk_insert = []
-    for parent in optimization.parents:
-        list_to_bulk_insert.append(parent.get_dict_representation())
-    table.bulk_insert(list_to_bulk_insert)
-    return optimization.optimization()
+    for child in optimization.children:
+        list_to_bulk_insert.append(child.get_dict_representation())
+    return list_to_bulk_insert
 
 
 def calculate_values_in_wb(series_counter):
@@ -54,14 +49,22 @@ def calculate_values_in_wb(series_counter):
     for el in langeron_list:
         el.get_cost()
     langeron_list = []
-    for j in range(series_counter * 20, series_counter * 20 + 21):
-        langeron_list.append(LangeronModel(table.select_by_id(j)))
+    for j in range(series_counter * 20 + 241, series_counter * 20 + 261):
+        langeron_list.append(LangeronModel(table.select_by_id(j).fetchone()))
     return langeron_list
 
 
-for i in range(10):
-    counter = 0
-    temporary_langeron_list = calculate_values_in_wb(counter)
-    calculated_langeron_list = make_optimization(temporary_langeron_list)
-    table.bulk_insert(calculated_langeron_list)
-    counter += 1
+counter = 0
+for i in range(5):
+    temporary_langeron_list = []
+    if i == 0:
+        for j in range(1, 21):
+            temporary_langeron_list.append(LangeronModel(table.select_by_id(j).fetchone()))
+        calculated_langeron_list = make_optimization(temporary_langeron_list)
+        table.bulk_insert(calculated_langeron_list)
+        counter += 1
+    else:
+        temporary_langeron_list = calculate_values_in_wb(counter)
+        calculated_langeron_list = make_optimization(temporary_langeron_list)
+        table.bulk_insert(calculated_langeron_list)
+        counter += 1

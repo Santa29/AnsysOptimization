@@ -71,25 +71,23 @@ class GeneticAlgorithm:
                         child.binary_encoding[i] = True
 
     def optimization(self):
-        generation_number = 1
+        # generation_number = 1
         for parent in self.parents:
-            parent.calculate_cost()
+            parent.get_cost()
             if parent.cost < self.best_individual.cost:
                 self.best_individual = parent
         indices_parent = [0, 0]
-        while generation_number <= max_generation_number:
-            for j in range(0, population_size / 2):
-                self.crossover(self.selection())
-            self.mutation()
-
-            # Estimate children cost
-            for child in self.children:
-                child.calculate_cost()
-                if child.cost < self.best_individual.cost:
-                    self.best_individual = child
-
-            # Next generation
-            self.parents = self.children
-            self.children.clear()
-            generation_number += 1
-        return self.best_individual
+        # while generation_number <= max_generation_number:
+        for j in range(0, int(population_size / 2)):
+            self.crossover(self.selection())
+        self.mutation()
+        # Estimate children cost
+        for child in self.children:
+            child.get_cost()
+            if child.cost < self.best_individual.cost:
+                self.best_individual = child
+        # Next generation
+        # self.parents = self.children
+        # self.children.clear()
+        # generation_number += 1
+        return self.children

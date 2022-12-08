@@ -38,7 +38,7 @@ def test_values_for_logic_test(test_id):
         'id': test_id,
         'langeron_angles': generate_test_angles(5),
         'langeron_wall_angles': generate_test_angles(5),
-        'wall_length': randint(25, 33),
+        'wall_length': randint(25, 32),
         'wall_angle': randint(0, 31),
         'polymer_volume_coordinate': choice([14, 16, 18, 20]),
         'series': 'need_calculate',
@@ -50,7 +50,7 @@ def test_values_for_logic_test(test_id):
         'value_spectrum_modal_max': list_to_string(modes_max),
         'antiflatter_value': randint(0, 7),
         'antiflatter_diam': choice([1, 2, 3, 4]),
-        'antiflatter_length': choice([100, 200, 300, 400, 500, 600, 700, 800]),
+        'antiflatter_length': choice([200, 250, 300, 400, 500, 600, 700, 800]),
         'bytestring': '',
         'creation_time': '',
         'mass': randint(0, 300),
@@ -102,14 +102,27 @@ def generate_max_modal_values(modes_list):
 
 
 if __name__ == '__main__':
+    mode = input()
     a = BaseModel('langeron')
     current_object_list = []
-    for i in range(50):
-        current_object_list.append(test_values_for_logic_test(i + 21))
-    a.bulk_insert(current_object_list)
-    current_object_list = a.select_by_series('need_calculate')
-    langeron_list = []
-    for obj in current_object_list:
-        langeron_list.append(LangeronModel(obj))
-    for obj in langeron_list:
-        obj.prepare_to_wb()
+    data_set = []
+    if mode == 'values':
+        for i in range(50):
+            current_object_list.append(test_values_for_logic_test(i))
+        a.bulk_insert(current_object_list)
+    if mode == 'test':
+        current_object_list = a.select_by_series('calculated')
+        langeron_list = []
+        for obj in current_object_list:
+            langeron_list.append(LangeronModel(obj))
+        for obj in langeron_list:
+            obj.get_cost()
+            obj.prepare_to_wb()
+            obj.update_values()
+    if mode == 'prepare':
+        current_object_list = a.select_by_series('need_calculate')
+        langeron_list = []
+        for obj in current_object_list:
+            langeron_list.append(LangeronModel(obj))
+        for obj in langeron_list:
+            obj.prepare_to_wb()
