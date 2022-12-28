@@ -49,7 +49,7 @@ def calculate_values_in_wb(series_counter):
     for el in langeron_list:
         el.get_cost()
     langeron_list = []
-    for j in range(series_counter * 20 + 241, series_counter * 20 + 261):
+    for j in range(series_counter * 20 + 101, series_counter * 20 + 121):
         langeron_list.append(LangeronModel(table.select_by_id(j).fetchone()))
     return langeron_list
 
@@ -58,7 +58,7 @@ counter = 0
 for i in range(5):
     temporary_langeron_list = []
     if i == 0:
-        for j in range(1, 21):
+        for j in range(1, 101):
             temporary_langeron_list.append(LangeronModel(table.select_by_id(j).fetchone()))
         calculated_langeron_list = make_optimization(temporary_langeron_list)
         table.bulk_insert(calculated_langeron_list)

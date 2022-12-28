@@ -36,8 +36,8 @@ def test_values_for_logic_test(test_id):
     modes_max = generate_max_modal_values(modes_min)
     values = {
         'id': test_id,
-        'langeron_angles': generate_test_angles(5),
-        'langeron_wall_angles': generate_test_angles(5),
+        'langeron_angles': generate_test_angles(3),
+        'langeron_wall_angles': generate_test_angles(3),
         'wall_length': randint(25, 32),
         'wall_angle': randint(0, 31),
         'polymer_volume_coordinate': choice([14, 16, 18, 20]),

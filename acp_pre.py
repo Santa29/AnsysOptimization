@@ -39,6 +39,8 @@ def parameter_value(param_name):
 
 def decode_angles_list(value):
     integer_code = str(value)
+    if integer_code == '0':
+        return []
     tmp = []
     angles = []
     counter = int(len(integer_code) / 2)

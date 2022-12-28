@@ -263,13 +263,25 @@ for i, el in enumerate(current_object_list):
     change_parameter('P35', el.shell_integer_code)
     change_parameter('P44', el.shell_integer_code)
     change_parameter('P84', el.langeron_integer_code[0:8])
-    change_parameter('P85', el.langeron_integer_code[8:])
+    if len(el.shell_integer_code) / 2 >= 4:
+        change_parameter('P85', el.langeron_integer_code[8:])
+    else:
+        change_parameter('P85', '0')
     change_parameter('P36', el.langeron_integer_code[0:8])
-    change_parameter('P37', el.langeron_integer_code[8:])
+    if len(el.shell_integer_code) / 2 >= 4:
+        change_parameter('P37', el.langeron_integer_code[8:])
+    else:
+        change_parameter('P37', '0')
     change_parameter('P42', el.langeron_integer_code[0:8])
-    change_parameter('P43', el.langeron_integer_code[8:])
+    if len(el.shell_integer_code) / 2 >= 4:
+        change_parameter('P43', el.langeron_integer_code[8:])
+    else:
+        change_parameter('P43', '0')
     change_parameter('P45', el.langeron_integer_code[0:8])
-    change_parameter('P46', el.langeron_integer_code[8:])
+    if len(el.shell_integer_code) / 2 >= 4:
+        change_parameter('P46', el.langeron_integer_code[8:])
+    else:
+        change_parameter('P46', '0')
     update_project()
     # Read safety factors
     el.value_vertical = float(get_parameter('P65'))
@@ -293,6 +305,7 @@ for i, el in enumerate(current_object_list):
     el.tip_flap = max(tmp1, tmp2)
     # Calculate and read the twist_tip
     el.twist_tip = max((float(get_parameter('P69')), float(get_parameter('P70'))))
+    el.series = 'calculated'
     el.update_values()
 
 logging('finish work')
