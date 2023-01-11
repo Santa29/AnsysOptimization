@@ -1,7 +1,7 @@
 import math
 from random import randint
 
-from .variables import population_size, max_generation_number
+from .variables import population_size
 
 
 class GeneticAlgorithm:
@@ -10,7 +10,7 @@ class GeneticAlgorithm:
         for wing in list_of_wings:
             self.parents.append(wing)
         self.children = []
-        self.mutation_rate = 0.02
+        self.mutation_rate = 2
         self.best_individual = list_of_wings[0]
 
     def selection(self):
@@ -48,27 +48,49 @@ class GeneticAlgorithm:
         return indices_parents
 
     def crossover(self, indices_parents):
+        # create tuple of selected variants
         ch = [self.parents[indices_parents[0]], self.parents[indices_parents[1]]]
+        # get the bytestring
+        for parent in ch:
+            parent.prepare_to_wb()
+            parent.series = 'calculated'
+        # get the points of crossover
         crossover_points = [
             randint(0, len(ch[0].bytestring)),
             randint(0, len(ch[0].bytestring))
         ]
+        # sort crossover points
         if crossover_points[0] > crossover_points[1]:
             crossover_points[0], crossover_points[1] = crossover_points[1], crossover_points[0]
+        # create temporary list representation of selected variants
+        tmp_list_ch_0 = list(ch[0].bytestring)
+        tmp_list_ch_1 = list(ch[1].bytestring)
+        # make crossover in temporary list representation
         for i in range(crossover_points[0], crossover_points[1]):
-            ch[0].binary_encoding[i] = self.parents[indices_parents[1]].binary_encoding[i]
-            ch[1].binary_encoding[i] = self.parents[indices_parents[0]].binary_encoding[i]
+            tmp_list_ch_0[i] = list(self.parents[indices_parents[1]].bytestring)[i]
+            tmp_list_ch_1[i] = list(self.parents[indices_parents[0]].bytestring)[i]
+        # get new values from temporary list representation to selected variants
+        ch[0].bytestring = ''.join(tmp_list_ch_0)
+        ch[1].bytestring = ''.join(tmp_list_ch_1)
+        # change initial values from bytestring to selected variants
+        for parent in ch:
+            parent.read_from_bites(parent.bytestring)
+        # append new items to children
         self.children.append(ch[0])
         self.children.append(ch[1])
 
     def mutation(self):
         for child in self.children:
+            child.prepare_to_wb()
+            list_representation = list(child.bytestring)
             for i in range(8, len(child.bytestring)):
-                if randint(1, 100) <= 100 * self.mutation_rate:
-                    if child.binary_encoding[i]:
-                        child.binary_encoding[i] = False
+                if randint(1, 100) <= self.mutation_rate:
+                    if list_representation[i] == '0':
+                        list_representation[i] = '1'
                     else:
-                        child.binary_encoding[i] = True
+                        list_representation[i] = '0'
+            child.bytestring = ''.join(list_representation)
+            child.read_from_bites(child.bytestring)
 
     def optimization(self):
         # generation_number = 1

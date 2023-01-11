@@ -171,6 +171,7 @@ class LangeronModel:
             18: 2,
             20: 3,
         }
+        self.bytestring = ''
         self.bytestring += format(int(len(self.shell_integer_code) / 2), '04b')
         self.bytestring += format(int(len(self.langeron_integer_code) / 2), '04b')
         argument = []

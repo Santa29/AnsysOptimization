@@ -9,7 +9,7 @@ class BaseModel:
         query = 'SELECT * from {} WHERE series = ?'.format(self.table_name)
         params = (series_param,)
         # Execute our query
-        conn = sqlite3.connect('experiment.sqlite')
+        conn = sqlite3.connect(r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\experiment.sqlite')
         cursor = conn.cursor()
         result = cursor.execute(query, params)
 
@@ -19,7 +19,7 @@ class BaseModel:
         query = 'SELECT * from {} WHERE id = ?'.format(self.table_name)
         params = (model_id,)
         # Execute our query
-        conn = sqlite3.connect('experiment.sqlite')
+        conn = sqlite3.connect(r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\experiment.sqlite')
         cursor = conn.cursor()
         result = cursor.execute(query, params)
 
@@ -29,7 +29,7 @@ class BaseModel:
         query = 'SELECT * from {} WHERE series = ?'.format(self.table_name)
         params = (series,)
         # Execute our query
-        conn = sqlite3.connect('experiment.sqlite')
+        conn = sqlite3.connect(r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\experiment.sqlite')
         cursor = conn.cursor()
         result = cursor.execute(query, params)
 
@@ -37,7 +37,7 @@ class BaseModel:
 
     def bulk_insert(self, insert_list):
         # Execute our query
-        conn = sqlite3.connect('experiment.sqlite')
+        conn = sqlite3.connect(r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\experiment.sqlite')
         cursor = conn.cursor()
 
         field_names = insert_list[0].keys()
@@ -60,7 +60,7 @@ class BaseModel:
         conn.commit()
 
     def update(self, new_data):
-        conn = sqlite3.connect('experiment.sqlite')
+        conn = sqlite3.connect(r'C:\Ansys projects\Lopast_helicopter\AnsysOptimization\experiment.sqlite')
         cursor = conn.cursor()
 
         placeholder_format = ''

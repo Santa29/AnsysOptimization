@@ -49,22 +49,26 @@ def calculate_values_in_wb(series_counter):
     for el in langeron_list:
         el.get_cost()
     langeron_list = []
-    for j in range(series_counter * 20 + 101, series_counter * 20 + 121):
+    for j in range(series_counter * 20 + 241, series_counter * 20 + 261):
         langeron_list.append(LangeronModel(table.select_by_id(j).fetchone()))
     return langeron_list
 
 
-counter = 0
-for i in range(5):
-    temporary_langeron_list = []
-    if i == 0:
-        for j in range(1, 101):
-            temporary_langeron_list.append(LangeronModel(table.select_by_id(j).fetchone()))
-        calculated_langeron_list = make_optimization(temporary_langeron_list)
-        table.bulk_insert(calculated_langeron_list)
-        counter += 1
-    else:
-        temporary_langeron_list = calculate_values_in_wb(counter)
-        calculated_langeron_list = make_optimization(temporary_langeron_list)
-        table.bulk_insert(calculated_langeron_list)
-        counter += 1
+mode = int(input())
+temporary_langeron_list = []
+selected_langeron_ids = [12, 26, 91, 23, 19, 57, 21, 69, 88, 72, 87, 85, 100, 35, 6, 97, 4, 80, 95, 59]
+if mode == 0:
+    for j in selected_langeron_ids:
+        # print('Select id for the first generation')
+        # tmp = int(input())
+        temporary_langeron_list.append(LangeronModel(table.select_by_id(j).fetchone()))
+    calculated_langeron_list = make_optimization(temporary_langeron_list)
+    table.bulk_insert(calculated_langeron_list)
+else:
+    tmp = int(table.select_by_series('calculated').fetchall()[-1][0]) - 19
+    for j in range(20):
+        temporary_langeron_list.append(LangeronModel(table.select_by_id(tmp + j).fetchone()))
+    calculated_langeron_list = make_optimization(temporary_langeron_list)
+    for el in calculated_langeron_list:
+        el['series'] = 'need_calculate'
+    table.bulk_insert(calculated_langeron_list)

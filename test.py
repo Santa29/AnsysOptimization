@@ -126,3 +126,28 @@ if __name__ == '__main__':
             langeron_list.append(LangeronModel(obj))
         for obj in langeron_list:
             obj.prepare_to_wb()
+    if mode == 'search_doubles':
+        tmp_1 = a.select_by_series('need_calculate')
+        tmp_2 = a.select_by_series('calculated')
+        current_object_list = []
+        search_list = []
+        for langeron in tmp_1:
+            current_object_list.append(LangeronModel(langeron))
+        for langeron in tmp_2:
+            search_list.append(LangeronModel(langeron))
+        for elem in search_list:
+            elem.prepare_to_wb()
+        for langeron in current_object_list:
+            langeron.prepare_to_wb()
+            for elem in search_list:
+                if elem.bytestring == langeron.bytestring:
+                    langeron.series = elem.series
+                    langeron.value_vertical = elem.value_vertical
+                    langeron.value_horizontal = elem.value_horizontal
+                    langeron.value_spectrum_modal_max = elem.value_spectrum_modal_max
+                    langeron.value_spectrum_modal_min = elem.value_spectrum_modal_min
+                    langeron.mass = elem.mass
+                    langeron.tip_flap = elem.tip_flap
+                    langeron.twist_tip = elem.twist_tip
+                    langeron.mass_center = elem.mass_center
+                    langeron.update_values()
