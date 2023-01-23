@@ -54,17 +54,51 @@ def calculate_values_in_wb(series_counter):
     return langeron_list
 
 
+def search_duplicate_values():
+    """
+    This function search duplicate values throw all previous calculated models. If model already calculated,
+    this function change series status of the current duplicate.
+    """
+    tmp_1 = table.select_by_series('need_calculate')
+    tmp_2 = table.select_by_series('calculated')
+    current_object_list = []
+    search_list = []
+    for langeron in tmp_1:
+        current_object_list.append(LangeronModel(langeron))
+    for langeron in tmp_2:
+        search_list.append(LangeronModel(langeron))
+    for elem in search_list:
+        elem.prepare_to_wb()
+        elem.series = 'calculated'
+        elem.update_values()
+    for langeron in current_object_list:
+        langeron.prepare_to_wb()
+        for elem in search_list:
+            if elem.bytestring == langeron.bytestring:
+                langeron.series = elem.series
+                langeron.value_vertical = elem.value_vertical
+                langeron.value_horizontal = elem.value_horizontal
+                langeron.value_spectrum_modal_max = elem.value_spectrum_modal_max
+                langeron.value_spectrum_modal_min = elem.value_spectrum_modal_min
+                langeron.mass = elem.mass
+                langeron.tip_flap = elem.tip_flap
+                langeron.twist_tip = elem.twist_tip
+                langeron.mass_center = elem.mass_center
+                langeron.update_values()
+
+
+# Read the mode of the script. If mode == 0 - this is first initialization
 mode = int(input())
 temporary_langeron_list = []
+# Preselected id valuable items from expert
 selected_langeron_ids = [12, 26, 91, 23, 19, 57, 21, 69, 88, 72, 87, 85, 100, 35, 6, 97, 4, 80, 95, 59]
+
 if mode == 0:
     for j in selected_langeron_ids:
-        # print('Select id for the first generation')
-        # tmp = int(input())
         temporary_langeron_list.append(LangeronModel(table.select_by_id(j).fetchone()))
     calculated_langeron_list = make_optimization(temporary_langeron_list)
     table.bulk_insert(calculated_langeron_list)
-else:
+elif mode == 1:
     tmp = int(table.select_by_series('calculated').fetchall()[-1][0]) - 19
     for j in range(20):
         temporary_langeron_list.append(LangeronModel(table.select_by_id(tmp + j).fetchone()))
@@ -72,3 +106,4 @@ else:
     for el in calculated_langeron_list:
         el['series'] = 'need_calculate'
     table.bulk_insert(calculated_langeron_list)
+    search_duplicate_values()

@@ -139,6 +139,7 @@ if __name__ == '__main__':
             elem.prepare_to_wb()
         for langeron in current_object_list:
             langeron.prepare_to_wb()
+            langeron.series = 'calculated'
             for elem in search_list:
                 if elem.bytestring == langeron.bytestring:
                     langeron.series = elem.series

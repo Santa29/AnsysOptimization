@@ -54,6 +54,7 @@ class GeneticAlgorithm:
         for parent in ch:
             parent.prepare_to_wb()
             parent.series = 'calculated'
+            parent.update_values()
         # get the points of crossover
         crossover_points = [
             randint(0, len(ch[0].bytestring)),
@@ -75,6 +76,8 @@ class GeneticAlgorithm:
         # change initial values from bytestring to selected variants
         for parent in ch:
             parent.read_from_bites(parent.bytestring)
+            parent.series = 'calculated'
+            parent.update_values()
         # append new items to children
         self.children.append(ch[0])
         self.children.append(ch[1])
