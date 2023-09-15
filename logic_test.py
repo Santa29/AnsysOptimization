@@ -100,16 +100,67 @@ class OptimizationTest(unittest.TestCase):
         self.base = BaseModel('current_item')
         self.langeron_list = []
         for i in range(population_size):
-            tmp = test_values_for_logic_test()
+            tmp = test_values_for_logic_test(i)
             tmp['id'] = i
             self.langeron_list.append(LangeronModel(tmp.values()))
         self.optimization_test = GeneticAlgorithm(self.langeron_list)
 
-    def test_optimization(self):
+    def test_full_optimization_operation_for_high_level_mistakes(self):
         for i in range(10):
             tmp = self.optimization_test.selection()
             self.optimization_test.crossover(tmp)
         self.optimization_test.mutation()
+
+    def test_calculating_total_cost_of_parents(self):
+        tmp_list = []
+        for parent in self.optimization_test.parents:
+            parent.prepare_to_wb()
+            tmp_list.append(parent.get_cost())
+        t_cost, m_cost = self.optimization_test.calculating_total_cost_of_parents()
+        self.assertEqual(t_cost, sum(tmp_list))
+        self.assertEqual(m_cost, max(tmp_list))
+
+    def test_calculating_p_selection(self):
+        t_cost, m_cost = self.optimization_test.calculating_total_cost_of_parents()
+        self.assertAlmostEqual(sum(self.optimization_test.calculating_p_selection(m_cost, t_cost)), 1, 2)
+
+    def test_roulette(self):
+        t_cost, m_cost = self.optimization_test.calculating_total_cost_of_parents()
+        p_selection = self.optimization_test.calculating_p_selection(m_cost, t_cost)
+        id_list = [0] * len(p_selection)
+        for i in range(len(p_selection) * 100):
+            tmp = self.optimization_test.roulette(p_selection)
+            id_list[tmp[0]] += 1
+            id_list[tmp[1]] += 1
+        for i in range(len(id_list)):
+            id_list[i] /= (len(p_selection) * 100 * 2)
+        print('\n', id_list, '\n', p_selection)
+
+    def test_optimization(self):
+        pass
+
+    def test_selection(self):
+        pass
+
+    def test_mutation(self):
+        parents_list = ''
+        children_list = ''
+        for i in range(10):
+            tmp = self.optimization_test.selection()
+            self.optimization_test.crossover(tmp)
+        for child in self.optimization_test.children:
+            child.prepare_to_wb()
+            parents_list += child.bytestring
+        self.optimization_test.mutation()
+        for child in self.optimization_test.children:
+            child.prepare_to_wb()
+            children_list += child.bytestring
+        counter = 0
+        for i in range(len(parents_list)):
+            if parents_list[i] != children_list[i]:
+                counter += 1
+        print('\n' + parents_list + '\n' + children_list)
+        self.assertAlmostEqual(self.optimization_test.mutation_rate * 0.01, counter / len(parents_list), 1)
 
 
 if __name__ == '__main__':

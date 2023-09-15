@@ -57,7 +57,7 @@ def test_values_for_logic_test(test_id):
         'tip_flap': randint(10, 100) / 10,
         'twist_tip': randint(100, 250) / 10,
         'mass_center': randint(50, 300),
-        'cost': 0.0
+        'cost': randint(5, 15) / 10
     }
     return values
 

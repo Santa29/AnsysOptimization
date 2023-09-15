@@ -13,25 +13,7 @@ class GeneticAlgorithm:
         self.mutation_rate = 2
         self.best_individual = list_of_wings[0]
 
-    def selection(self):
-        # Set initial values
-        total_parents_cost = 0
-        max_parent_cost = -math.inf
-
-        # Calculating total cost of parents
-        for parent in self.parents:
-            total_parents_cost += parent.get_cost()
-            if max_parent_cost < parent.get_cost():
-                max_parent_cost = parent.get_cost()
-
-        # Calculating cost function
-        t = 1.1
-        f_max = t * max_parent_cost
-        d = population_size * f_max - total_parents_cost
-        p_selection = []
-        for i in range(0, population_size):
-            p_selection.append((f_max - self.parents[i].get_cost()) / d)
-
+    def roulette(self, p_selection):
         # Creating the roulette
         indices_parents = [0, 1]
         for i in range(len(indices_parents)):
@@ -46,6 +28,35 @@ class GeneticAlgorithm:
             else:
                 indices_parents[i] = sector
         return indices_parents
+
+    def calculating_total_cost_of_parents(self):
+        # Set initial values
+        total_parents_cost = 0
+        max_parent_cost = -math.inf
+
+        # Calculating total cost of parents
+        for parent in self.parents:
+            total_parents_cost += parent.get_cost()
+            if max_parent_cost < parent.get_cost():
+                max_parent_cost = parent.get_cost()
+        return total_parents_cost, max_parent_cost
+
+    def calculating_p_selection(self, max_cost, total_cost):
+        t = 1.1
+        max_parent_cost = max_cost
+        total_parents_cost = total_cost
+        f_max = t * max_parent_cost
+        d = population_size * f_max - total_parents_cost
+        p_selection = []
+        for i in range(0, population_size):
+            p_selection.append((f_max - self.parents[i].get_cost()) / d)
+
+        return p_selection
+
+    def selection(self):
+        total_parents_cost, max_parent_cost = self.calculating_total_cost_of_parents()
+        p_selection = self.calculating_p_selection(total_parents_cost, max_parent_cost)
+        return self.roulette(p_selection)
 
     def crossover(self, indices_parents):
         # create tuple of selected variants
