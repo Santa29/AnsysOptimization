@@ -37,6 +37,7 @@ def make_optimization(parents_list):
 
 
 def calculate_values_in_wb(series_counter):
+    # TODO fix this function to avoid solid series counter, see main code for example
     """This function calculate the values in wb and return list of calculated LangeronModels depends on
     series_counter """
     langeron_list = []

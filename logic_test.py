@@ -128,12 +128,12 @@ class OptimizationTest(unittest.TestCase):
         t_cost, m_cost = self.optimization_test.calculating_total_cost_of_parents()
         p_selection = self.optimization_test.calculating_p_selection(m_cost, t_cost)
         id_list = [0] * len(p_selection)
-        for i in range(len(p_selection) * 100):
+        for i in range(len(p_selection) * 1000000):
             tmp = self.optimization_test.roulette(p_selection)
             id_list[tmp[0]] += 1
             id_list[tmp[1]] += 1
         for i in range(len(id_list)):
-            id_list[i] /= (len(p_selection) * 100 * 2)
+            id_list[i] /= (len(p_selection) * 1000000 * 2)
         print('\n', id_list, '\n', p_selection)
 
     def test_optimization(self):

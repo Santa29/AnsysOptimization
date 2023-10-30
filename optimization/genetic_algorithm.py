@@ -1,7 +1,12 @@
 import math
 from random import randint
 
+from test import test_values_for_logic_test
 from .variables import population_size
+from models.my_orm import BaseModel
+from models.langeron import LangeronModel
+
+table = BaseModel('langeron')
 
 
 class GeneticAlgorithm:
@@ -77,21 +82,28 @@ class GeneticAlgorithm:
         # create temporary list representation of selected variants
         tmp_list_ch_0 = list(ch[0].bytestring)
         tmp_list_ch_1 = list(ch[1].bytestring)
+        floating_chapter_0 = tmp_list_ch_0[crossover_points[0]:crossover_points[1]]
+        floating_chapter_1 = tmp_list_ch_1[crossover_points[0]:crossover_points[1]]
         # make crossover in temporary list representation
         for i in range(crossover_points[0], crossover_points[1]):
-            tmp_list_ch_0[i] = list(self.parents[indices_parents[1]].bytestring)[i]
-            tmp_list_ch_1[i] = list(self.parents[indices_parents[0]].bytestring)[i]
-        # get new values from temporary list representation to selected variants
-        ch[0].bytestring = ''.join(tmp_list_ch_0)
-        ch[1].bytestring = ''.join(tmp_list_ch_1)
+            tmp_index = i - crossover_points[0]
+            tmp_list_ch_0[i] = floating_chapter_1[tmp_index]
+            tmp_list_ch_1[i] = floating_chapter_0[tmp_index]
         # change initial values from bytestring to selected variants
-        for parent in ch:
-            parent.read_from_bites(parent.bytestring)
-            parent.series = 'calculated'
-            parent.update_values()
-        # append new items to children
-        self.children.append(ch[0])
-        self.children.append(ch[1])
+        # for parent in ch:
+        #     parent.read_from_bites(parent.bytestring)
+        #     parent.series = 'calculated'
+        #     parent.update_values()
+        # calculate current last id value
+        tmp = int(table.select_by_series('calculated').fetchall()[-1][0]) + len(self.children)
+        random_new_wing_list = [
+            LangeronModel(test_values_for_logic_test(tmp + 1)),
+            LangeronModel(test_values_for_logic_test(tmp + 2))
+        ]
+        random_new_wing_list[0].read_from_bites(''.join(tmp_list_ch_0))
+        random_new_wing_list[1].read_from_bites(''.join(tmp_list_ch_1))
+        self.children.append(random_new_wing_list[0])
+        self.children.append(random_new_wing_list[1])
 
     def mutation(self):
         for child in self.children:
@@ -105,6 +117,7 @@ class GeneticAlgorithm:
                         list_representation[i] = '0'
             child.bytestring = ''.join(list_representation)
             child.read_from_bites(child.bytestring)
+            child.update_values()
 
     def optimization(self):
         # generation_number = 1
