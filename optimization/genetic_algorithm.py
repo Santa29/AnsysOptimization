@@ -97,8 +97,8 @@ class GeneticAlgorithm:
         # calculate current last id value
         tmp = int(table.select_by_series('calculated').fetchall()[-1][0]) + len(self.children)
         random_new_wing_list = [
-            LangeronModel(test_values_for_logic_test(tmp + 1)),
-            LangeronModel(test_values_for_logic_test(tmp + 2))
+            LangeronModel(test_values_for_logic_test(tmp + 1).values()),
+            LangeronModel(test_values_for_logic_test(tmp + 2).values())
         ]
         random_new_wing_list[0].read_from_bites(''.join(tmp_list_ch_0))
         random_new_wing_list[1].read_from_bites(''.join(tmp_list_ch_1))

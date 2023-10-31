@@ -34,7 +34,7 @@ WEIGHT_UTWIST = 0.25
 
 
 class LangeronModel:
-    """Default model of wing with longerone"""
+    """Default model of wing with langerone"""
     initialization_list = [
         'id',
         'langeron_angles',
@@ -105,7 +105,7 @@ class LangeronModel:
         self.update_values()
 
     def name_autoincrement(self):
-        name = 'Series.' + str(self.series) + ' Angles:' + str(self.shell_angles)
+        name = 'Shell Angles:' + str(self.shell_angles)
         return name
 
     def create_angles_range(self):
