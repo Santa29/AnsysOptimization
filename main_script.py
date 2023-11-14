@@ -108,3 +108,13 @@ elif mode == 1:
         el['series'] = 'need_calculate'
     table.bulk_insert(calculated_langeron_list)
     search_duplicate_values()
+elif mode == 2:
+    tmp_list = table.select_by_series('calculated').fetchall()
+    langeron_tmp_list = []
+    for el in tmp_list:
+        langeron_tmp_list.append(LangeronModel(el))
+    for el in langeron_tmp_list:
+        el.get_cost()
+        el.prepare_to_wb()
+        el.update_values()
+
