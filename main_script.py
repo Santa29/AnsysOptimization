@@ -55,6 +55,47 @@ def calculate_values_in_wb(series_counter):
     return langeron_list
 
 
+def add_best_individuals():
+    """
+    This function searches for the two best individuals in all generations and replaces the first two generated
+    individuals in the last generation with them.
+    """
+    remaining_individuals = []
+    current_generation = []
+    best_individuals = []
+    current_generation_rows_set = table.select_by_series('need_calculate').fetchall()
+    for k in range(2):
+        current_generation.append(LangeronModel(current_generation_rows_set[k]))
+    all_rows_list = table.select_by_series('calculated').fetchall()
+    for n in all_rows_list:
+        remaining_individuals.append(LangeronModel(n))
+    remaining_individuals.sort(key=lambda x: x.cost)
+    best_individuals.append(remaining_individuals[0])
+    for individual in remaining_individuals:
+        if individual.cost != best_individuals[0].cost:
+            best_individuals.append(individual)
+            break
+    for elem in best_individuals:
+        print(elem.cost)
+    replace_values(best_individuals, current_generation)
+
+
+def replace_values(first_pair: list, second_pair: list):
+    """
+    this function replaces the properties of objects from the second list with the properties of objects from the
+    first list.
+    """
+    for i in range(2):
+        first_pair[i].prepare_to_wb()
+        second_pair[i].prepare_to_wb()
+        for current_property in second_pair[i].__dict__.keys():
+            if current_property in ['id', 'angles_range']:
+                pass
+            temp = getattr(first_pair[i], current_property)
+            setattr(second_pair[i], current_property, temp)
+            second_pair[i].update_values()
+
+
 def search_duplicate_values():
     """
     This function search duplicate values throw all previous calculated models. If model already calculated,
@@ -108,6 +149,7 @@ elif mode == 1:
         el['series'] = 'need_calculate'
     table.bulk_insert(calculated_langeron_list)
     search_duplicate_values()
+    add_best_individuals()
 elif mode == 2:
     tmp_list = table.select_by_series('calculated').fetchall()
     langeron_tmp_list = []
@@ -117,4 +159,3 @@ elif mode == 2:
         el.get_cost()
         el.prepare_to_wb()
         el.update_values()
-
