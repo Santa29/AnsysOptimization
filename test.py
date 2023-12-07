@@ -31,35 +31,61 @@ def test_values_for_orm(model_type='Shell'):
         return values
 
 
-def test_values_for_logic_test(test_id):
-    modes_min = generate_modal_values(6)
-    modes_max = generate_max_modal_values(modes_min)
-    values = {
-        'id': test_id,
-        'langeron_angles': generate_test_angles(3),
-        'langeron_wall_angles': generate_test_angles(3),
-        'wall_length': randint(25, 32),
-        'wall_angle': randint(0, 31),
-        'polymer_volume_coordinate': choice([14, 16, 18, 20]),
-        'series': 'need_calculate',
-        'model_name': '',
-        'shell_angles': generate_test_angles(2),
-        'value_vertical': randint(30, 1000) / 100,
-        'value_horizontal': randint(30, 1000) / 100,
-        'value_spectrum_modal_min': list_to_string(modes_min),
-        'value_spectrum_modal_max': list_to_string(modes_max),
-        'antiflatter_value': randint(0, 7),
-        'antiflatter_diam': choice([1, 2, 3, 4]),
-        'antiflatter_length': choice([200, 250, 300, 400, 500, 600, 700, 800]),
-        'bytestring': '',
-        'creation_time': '',
-        'mass': randint(0, 300),
-        'tip_flap': randint(10, 100) / 10,
-        'twist_tip': randint(100, 250) / 10,
-        'mass_center': randint(50, 300),
-        'cost': randint(5, 15) / 10
-    }
-    return values
+def test_values_for_logic_test(test_id, model='langeron'):
+    if model == 'langeron':
+        modes_min = generate_modal_values(6)
+        modes_max = generate_max_modal_values(modes_min)
+        values = {
+            'id': test_id,
+            'langeron_angles': generate_test_angles(3),
+            'langeron_wall_angles': generate_test_angles(3),
+            'wall_length': randint(25, 32),
+            'wall_angle': randint(0, 31),
+            'polymer_volume_coordinate': choice([14, 16, 18, 20]),
+            'series': 'need_calculate',
+            'model_name': '',
+            'shell_angles': generate_test_angles(2),
+            'value_vertical': randint(30, 1000) / 100,
+            'value_horizontal': randint(30, 1000) / 100,
+            'value_spectrum_modal_min': list_to_string(modes_min),
+            'value_spectrum_modal_max': list_to_string(modes_max),
+            'antiflatter_value': randint(0, 7),
+            'antiflatter_diam': choice([1, 2, 3, 4]),
+            'antiflatter_length': choice([200, 250, 300, 400, 500, 600, 700, 800]),
+            'bytestring': '',
+            'creation_time': '',
+            'mass': randint(0, 300),
+            'tip_flap': randint(10, 100) / 10,
+            'twist_tip': randint(100, 250) / 10,
+            'mass_center': randint(50, 300),
+            'cost': randint(5, 15) / 10
+        }
+        return values
+    elif mode == 'shell':
+        modes_min = generate_modal_values(6)
+        modes_max = generate_max_modal_values(modes_min)
+        values = {
+            'id': test_id,
+            'polymer_volume_coordinate': choice([14, 16, 18, 20]),
+            'series': 'need_calculate',
+            'model_name': '',
+            'shell_angles': generate_test_angles(2),
+            'value_vertical': randint(30, 1000) / 100,
+            'value_horizontal': randint(30, 1000) / 100,
+            'value_spectrum_modal_min': list_to_string(modes_min),
+            'value_spectrum_modal_max': list_to_string(modes_max),
+            'antiflatter_value': randint(0, 7),
+            'antiflatter_diam': choice([1, 2, 3, 4]),
+            'antiflatter_length': choice([200, 250, 300, 400, 500, 600, 700, 800]),
+            'bytestring': '',
+            'creation_time': '',
+            'mass': randint(0, 300),
+            'tip_flap': randint(10, 100) / 10,
+            'twist_tip': randint(100, 250) / 10,
+            'mass_center': randint(50, 300),
+            'cost': randint(5, 15) / 10
+        }
+        return values
 
 
 def generate_test_angles(value):

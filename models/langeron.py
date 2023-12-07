@@ -23,9 +23,9 @@ MAX_TIP_TWIST = 0.05
 BASE_MASS_CENTER = 0.004
 # Cost functions parameters
 WEIGHT_MASS = 0.1
-WEIGHT_NATURAL_FREQUENCIES = 0.02
+WEIGHT_NATURAL_FREQUENCIES = 0.22
 WEIGHT_AEROELASTIC_STABILITY = 0.2
-WEIGHT_STRENGTH = 0.68
+WEIGHT_STRENGTH = 0.48
 
 WEIGHT_SIGMA = 0.25
 WEIGHT_UZ = 0.25
@@ -319,7 +319,8 @@ class LangeronModel:
 
     def cost_aeroelastic_stability(self):
         self.mass_center = float(self.mass_center)
-        return self.mass_center / BASE_MASS_CENTER
+        tmp = abs((self.mass_center - 0.0025) / BASE_MASS_CENTER - 0.0025)
+        return tmp
 
     def cost_penalty(self):
         self.value_vertical = float(self.value_vertical)

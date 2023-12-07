@@ -3,6 +3,7 @@ from test import test_values_for_logic_test
 from random import randint
 
 from models.my_orm import BaseModel
+from models.shell import ShellModel
 from models.langeron import LangeronModel
 from optimization.genetic_algorithm import GeneticAlgorithm
 from optimization.variables import population_size
@@ -45,7 +46,7 @@ class TestLangeron(unittest.TestCase):
                 self.assertEqual(self.langeron.__getattribute__(el), self.test_case[el])
 
     def test_repr(self):
-        self.assertEqual(self.langeron.model_name, 'Series.test_langeron Angles:-60.875, -55.25, -7.4375')
+        self.assertEqual(self.langeron.model_name, 'Shell Angles:-60.875, -55.25, -7.4375')
 
     def test_decode_angles_to_list(self):
         self.assertEqual(self.langeron.decode_angles_to_list('shell_angles'), ['-60.875', '-55.25', '-7.4375'])
@@ -93,6 +94,79 @@ class TestLangeron(unittest.TestCase):
     def test_repr_dict(self):
         self.langeron.prepare_to_wb()
         print(self.langeron.get_dict_representation())
+
+
+class TestShell(unittest.TestCase):
+    def setUp(self):
+        self.base = BaseModel('current_item_2')
+        self.test_case = {'id': 1,
+                          'polymer_volume_coordinate': 14,
+                          'series': 'test_shell',
+                          'model_name': '',
+                          'shell_angles': '-60.875, -55.25, -7.4375',
+                          'value_vertical': '',
+                          'value_horizontal': '',
+                          'value_spectrum_modal_min': '',
+                          'value_spectrum_modal_max': '',
+                          'antiflatter_value': 3,
+                          'antiflatter_diam': 2,
+                          'antiflatter_length': 400,
+                          'bytestring': '',
+                          'creation_time': '',
+                          'mass': 430,
+                          'tip_flap': 40.0,
+                          'twist_tip': 15.0,
+                          'mass_center': 110,
+                          'cost': 0.0,
+                          'shell_integer_code': ''
+                          }
+        self.shell = ShellModel(self.test_case.values())
+
+    def test_model_creation(self):
+        for el in self.test_case:
+            if el != 'model_name' and el != 'creation_time':
+                self.assertEqual(self.shell.__getattribute__(el), self.test_case[el])
+
+    def test_repr(self):
+        self.assertEqual(self.shell.model_name, 'Shell Angles:-60.875, -55.25, -7.4375')
+
+    def test_decode_angles_to_list(self):
+        self.assertEqual(self.shell.decode_angles_to_list('shell_angles'), ['-60.875', '-55.25', '-7.4375'])
+
+    def test_create_integer_code(self):
+        self.assertEqual(self.shell.create_integer_code('shell_angles'), '202239')
+
+    def test_get_attr(self):
+        self.assertEqual(self.shell.__getattribute__('shell_angles').split(', '), ['-60.875', '-55.25', '-7.4375'])
+
+    def test_prepare_to_wb(self):
+        self.shell.prepare_to_wb()
+        self.assertEqual(self.shell.shell_integer_code, '202239')
+        self.assertEqual(self.shell.bytestring, '00110010100011000111010101101100')
+
+    def test_read_from_bytes(self):
+        self.shell.prepare_to_wb()
+        self.test_case['shell_integer_code'] = self.shell.shell_integer_code
+        result = self.shell.read_from_bites(self.shell.bytestring)
+        for el in result:
+            self.assertEqual(self.test_case[el], result[el])
+
+    def test_replace_values_from_bytestring(self):
+        self.shell.prepare_to_wb()
+        list_of_calculated_attributes = [
+            'model_name',
+            'creation_time',
+            'bytestring',
+            'series',
+            'shell_integer_code'
+        ]
+        for el in self.test_case:
+            if el not in list_of_calculated_attributes:
+                self.assertEqual(self.shell.__getattribute__(el), self.test_case[el])
+
+    def test_repr_dict(self):
+        self.shell.prepare_to_wb()
+        print(self.shell.get_dict_representation())
 
 
 class OptimizationTest(unittest.TestCase):
