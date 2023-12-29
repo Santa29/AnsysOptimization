@@ -61,5 +61,5 @@ class WBShellModel:
         data_to_update = {}
         for el in self.initialization_list:
             data_to_update[el] = getattr(self, el)
-        tmp = BaseModel('langeron')
+        tmp = BaseModel('shell')
         tmp.update(new_data=data_to_update)

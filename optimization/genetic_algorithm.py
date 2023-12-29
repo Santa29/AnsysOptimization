@@ -5,12 +5,13 @@ from test import test_values_for_logic_test
 from .variables import population_size
 from models.my_orm import BaseModel
 from models.langeron import LangeronModel
-
-table = BaseModel('langeron')
+from models.shell import ShellModel
 
 
 class GeneticAlgorithm:
-    def __init__(self, list_of_wings):
+    def __init__(self, list_of_wings, model='langeron'):
+        self.table_name = model
+        self.table = BaseModel(self.table_name)
         self.parents = []
         for wing in list_of_wings:
             self.parents.append(wing)
@@ -95,11 +96,17 @@ class GeneticAlgorithm:
         #     parent.series = 'calculated'
         #     parent.update_values()
         # calculate current last id value
-        tmp = int(table.select_by_series('calculated').fetchall()[-1][0]) + len(self.children)
-        random_new_wing_list = [
-            LangeronModel(test_values_for_logic_test(tmp + 1).values()),
-            LangeronModel(test_values_for_logic_test(tmp + 2).values())
-        ]
+        tmp = int(self.table.select_by_series('calculated').fetchall()[-1][0]) + len(self.children)
+        if self.table_name == 'langeron':
+            random_new_wing_list = [
+                LangeronModel(test_values_for_logic_test(tmp + 1).values()),
+                LangeronModel(test_values_for_logic_test(tmp + 2).values())
+            ]
+        else:
+            random_new_wing_list = [
+                ShellModel(test_values_for_logic_test(tmp + 1, model='shell').values()),
+                ShellModel(test_values_for_logic_test(tmp + 2, model='shell').values())
+            ]
         random_new_wing_list[0].read_from_bites(''.join(tmp_list_ch_0))
         random_new_wing_list[1].read_from_bites(''.join(tmp_list_ch_1))
         self.children.append(random_new_wing_list[0])
