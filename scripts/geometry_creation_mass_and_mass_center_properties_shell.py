@@ -10,26 +10,23 @@ density_epoxy = 2600
 density_pps = 1490
 
 # Calculate mass properties
-edge_list = [GetRootPart().Bodies[4].Edges[5],
-    GetRootPart().Bodies[5].Edges[8],
-    GetRootPart().Bodies[6].Edges[2],
-    GetRootPart().Bodies[6].Edges[3],
-    GetRootPart().Bodies[5].Edges[5],
-    GetRootPart().Bodies[4].Edges[2],
-    GetRootPart().Bodies[5].Edges[7]]
+edge_list = [GetRootPart().Bodies[4].Edges[0],
+    GetRootPart().Bodies[4].Edges[4],
+    GetRootPart().Bodies[3].Edges[7],
+    GetRootPart().Bodies[3].Edges[11],
+    GetRootPart().Bodies[3].Edges[0],
+    GetRootPart().Bodies[3].Edges[4]]
 mass_and_coord_list = []
 length = 0.0
 body_list = [
-        GetRootPart().Bodies[6].Faces[0],
-        GetRootPart().Bodies[5].Faces[2],
-        GetRootPart().Bodies[3].Faces[0],
-        GetRootPart().Bodies[4].Faces[1],
+        GetRootPart().Bodies[0].Faces[4],
+        GetRootPart().Bodies[1].Faces[0],
+        GetRootPart().Bodies[0].Faces[3],
         ]
 for edge in edge_list:
     mass_and_coord_list.append([edge.Shape.Length * 0.0012 * density_pps, edge.EvalMid().Point])
 mass_and_coord_list.append([body_list[0].Area * density_epoxy, body_list[0].EvalMid().Point])
 mass_and_coord_list.append([body_list[1].Area * density_polyester, body_list[1].EvalMid().Point])
-mass_and_coord_list.append([body_list[3].Area * density_polyester, body_list[1].EvalMid().Point])
 mass_and_coord_list.append([body_list[2].Area * density_steel, body_list[2].EvalMid().Point])
 total_mass = 0.0
 for el in mass_and_coord_list:

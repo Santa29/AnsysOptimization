@@ -103,7 +103,10 @@ else:
     current_model = 'langeron'
 
 # Create the angles list depends on model type
-shell_layer_number, langeron_layer_number, langeron_wall_number = read_number_of_layers(number_of_layers, current_model)
+if current_model == "langeron":
+    shell_layer_number, langeron_layer_number, langeron_wall_number = read_number_of_layers(number_of_layers, current_model)
+else:
+    shell_layer_number = read_number_of_layers(number_of_layers, current_model)
 if current_model == "langeron":
     shell_angles, langeron_angles, wall_angles = create_orientation_lists(
         shell_angles_set='Shell_set',
@@ -114,17 +117,23 @@ if current_model == "langeron":
         model_type=current_model
     )
 else:
-    shell_angles = create_orientation_lists(shell_angles_set=parameter_value('Shell set'), model_type=current_model)
+    shell_angles = create_orientation_lists(shell_angles_set='Shell_set', model_type=current_model)
 
 # Create stackups
-build_stackup(shell_angles, 'Shell')
-build_stackup(langeron_angles, 'Langeron')
-build_stackup(wall_angles, 'Langeron_wall')
+if current_model == "langeron":
+    build_stackup(shell_angles, 'Shell')
+    build_stackup(langeron_angles, 'Langeron')
+    build_stackup(wall_angles, 'Langeron_wall')
+else:
+    build_stackup(shell_angles, 'Shell')
 
 # Create plies
-create_plies('Langeron', 'Langeron')
-create_plies('Shell', 'Shell')
-create_plies('Langeron_wall', 'Langeron_wall')
+if current_model == "langeron":
+    create_plies('Langeron', 'Langeron')
+    create_plies('Shell', 'Shell')
+    create_plies('Langeron_wall', 'Langeron_wall')
+else:
+    create_plies('Shell', 'Shell')
 
 # Update project
 db.models['ACP Model'].update()

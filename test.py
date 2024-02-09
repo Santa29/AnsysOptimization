@@ -2,6 +2,7 @@
 from random import randint, choice
 from models.my_orm import BaseModel
 from models.langeron import LangeronModel
+from models.shell import ShellModel
 
 
 def test_values_for_orm(model_type='Shell'):
@@ -61,7 +62,7 @@ def test_values_for_logic_test(test_id, model='langeron'):
             'cost': randint(5, 15) / 10
         }
         return values
-    elif mode == 'shell':
+    elif model == 'shell':
         modes_min = generate_modal_values(6)
         modes_max = generate_max_modal_values(modes_min)
         values = {
@@ -69,7 +70,7 @@ def test_values_for_logic_test(test_id, model='langeron'):
             'polymer_volume_coordinate': choice([14, 16, 18, 20]),
             'series': 'need_calculate',
             'model_name': '',
-            'shell_angles': generate_test_angles(2),
+            'shell_angles': generate_test_angles(3),
             'value_vertical': randint(30, 1000) / 100,
             'value_horizontal': randint(30, 1000) / 100,
             'value_spectrum_modal_min': list_to_string(modes_min),
@@ -129,12 +130,21 @@ def generate_max_modal_values(modes_list):
 
 if __name__ == '__main__':
     mode = input()
-    a = BaseModel('langeron')
+    if mode in ['values', 'test', 'prepare', 'search_doubles']:
+        a = BaseModel('langeron')
+    elif mode in ['values_shell', 'test_shell', 'prepare_shell', 'search_doubles_shell']:
+        a = BaseModel('shell')
+    else:
+        a = BaseModel('langeron')
     current_object_list = []
     data_set = []
     if mode == 'values':
         for i in range(50):
             current_object_list.append(test_values_for_logic_test(i))
+        a.bulk_insert(current_object_list)
+    if mode == 'values_shell':
+        for i in range(500):
+            current_object_list.append(test_values_for_logic_test(i, model='shell'))
         a.bulk_insert(current_object_list)
     if mode == 'test':
         current_object_list = a.select_by_series('calculated')
@@ -145,12 +155,28 @@ if __name__ == '__main__':
             obj.get_cost()
             obj.prepare_to_wb()
             obj.update_values()
+    if mode == 'test_shell':
+        current_object_list = a.select_by_series('calculated')
+        shell_list = []
+        for obj in current_object_list:
+            shell_list.append(ShellModel(obj))
+        for obj in shell_list:
+            obj.get_cost()
+            obj.prepare_to_wb()
+            obj.update_values()
     if mode == 'prepare':
         current_object_list = a.select_by_series('need_calculate')
         langeron_list = []
         for obj in current_object_list:
             langeron_list.append(LangeronModel(obj))
         for obj in langeron_list:
+            obj.prepare_to_wb()
+    if mode == 'prepare_shell':
+        current_object_list = a.select_by_series('need_calculate')
+        shell_list = []
+        for obj in current_object_list:
+            shell_list.append(ShellModel(obj))
+        for obj in shell_list:
             obj.prepare_to_wb()
     if mode == 'search_doubles':
         tmp_1 = a.select_by_series('need_calculate')
@@ -178,3 +204,29 @@ if __name__ == '__main__':
                     langeron.twist_tip = elem.twist_tip
                     langeron.mass_center = elem.mass_center
                     langeron.update_values()
+    if mode == "search_doubles_shell":
+        tmp_1 = a.select_by_series('need_calculate')
+        tmp_2 = a.select_by_series('calculated')
+        current_object_list = []
+        search_list = []
+        for shell in tmp_1:
+            current_object_list.append(ShellModel(shell))
+        for shell in tmp_2:
+            search_list.append(ShellModel(shell))
+        for elem in search_list:
+            elem.prepare_to_wb()
+        for shell in current_object_list:
+            shell.prepare_to_wb()
+            shell.series = 'calculated'
+            for elem in search_list:
+                if elem.bytestring == shell.bytestring:
+                    shell.series = elem.series
+                    shell.value_vertical = elem.value_vertical
+                    shell.value_horizontal = elem.value_horizontal
+                    shell.value_spectrum_modal_max = elem.value_spectrum_modal_max
+                    shell.value_spectrum_modal_min = elem.value_spectrum_modal_min
+                    shell.mass = elem.mass
+                    shell.tip_flap = elem.tip_flap
+                    shell.twist_tip = elem.twist_tip
+                    shell.mass_center = elem.mass_center
+                    shell.update_values()

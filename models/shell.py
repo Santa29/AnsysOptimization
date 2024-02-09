@@ -37,7 +37,6 @@ class ShellModel:
     """Default model of wing with longerone"""
     initialization_list = [
         'id',
-        'polymer_volume_coordinate',
         'series',
         'model_name',
         'shell_angles',
@@ -55,6 +54,7 @@ class ShellModel:
         'twist_tip',
         'mass_center',
         'cost',
+        'polymer_volume_coordinate',
         'shell_integer_code'
     ]
 

@@ -5,7 +5,6 @@ class WBShellModel:
     def __init__(self, row):
         self.initialization_list = [
             'id',
-            'polymer_volume_coordinate',
             'series',
             'model_name',
             'shell_angles',
@@ -23,11 +22,10 @@ class WBShellModel:
             'twist_tip',
             'mass_center',
             'cost',
-            'langeron_integer_code',
+            'polymer_volume_coordinate',
             'shell_integer_code'
         ]
         self.id = 0
-        self.polymer_volume_coordinate = 0
         self.series = ''
         self.model_name = ''
         self.shell_angles = ''
@@ -45,8 +43,9 @@ class WBShellModel:
         self.twist_tip = 0.0
         self.mass_center = 0.0
         self.cost = 0.0
-        self.langeron_integer_code = ''
+        self.polymer_volume_coordinate = 0
         self.shell_integer_code = ''
+        self.row = row
         for i, el in enumerate(row):
             setattr(self, self.initialization_list[i], el)
 
